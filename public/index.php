@@ -11,10 +11,12 @@ use Phalcon\Mvc\view;
 use Phalcon\Mvc\Application;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Mvc\Url as UrlProvider;
-use Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter;
+use Phalcon\Db\Adapter\Pdo\Mysql as MysqlPdo;
+use Phalcon\Db\Adapter\Pdo\Postgresql as PostgreSQLPdo;
+use Phalcon\Config\Adapter\Ini;
 
 define('ROOT_DIR', realpath(__DIR__ . '/../'));
-
+echo ROOT_DIR . '/app/controllers' . PHP_EOL;
 $loader = new Loader();
 $loader->registerDirs(
     [
@@ -31,10 +33,32 @@ $di->set('view', function () {
     return $view;
 });
 
+$config = new Ini(ROOT_DIR . '/app/config/config.ini');
+$di->set('db', function () use ($config) {
+    $database = $config->database;
+    $conn = [
+        'host' => $database->host,
+        'username' => $database->username,
+        'password' => $database->password,
+        'dbname' => $database->dbname
+    ];
+    $adapter = $database->adapter;
+    switch ($adapter) {
+        case 'Mysql':
+            return new MysqlPdo($conn);
+            break;
+        case 'PostgresSQL':
+            $conn['port'] = $database->port;
+            return new PostgreSQLPdo($conn);
+            break;
+    }
+});
+
 $application = new Application($di);
 try {
     $response = $application->handle();
     $response->send();
 } catch (Exception $e) {
-    echo "[" . __FILE__ . __LINE__ . "]Exception: " . $e->getMessage() . PHP_EOL;
+    echo "[" . __FILE__ . ':' . __LINE__ . "]Exception: " . $e->getMessage() . PHP_EOL;
 }
+
