@@ -18,10 +18,10 @@ class BaseController extends Controller
     {
         $action = $dispatcher->getActionName();
         $controller = $dispatcher->getControllerName();
-        if (!isset($_REQUEST['role'])) {
+        if (!$this->request('role')) {
             $role = 'admin';
         } else {
-            $role = $_REQUEST['role'];
+            $role = $this->request('role');
         }
         if (!$this->isAllowed($role, $controller, $action)) {
 
@@ -65,5 +65,14 @@ class BaseController extends Controller
             }
         }
         return $acl;
+    }
+
+    function request($key, $default = null)
+    {
+        if (isset($_REQUEST[$key])) {
+            return $_REQUEST[$key];
+        }else{
+            return $default;
+        }
     }
 }

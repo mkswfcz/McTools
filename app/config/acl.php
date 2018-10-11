@@ -9,7 +9,7 @@
 return [
     'admin'=>[
         'Articles'=>[
-            'update'
+            '*'
         ]
     ]
 ];
