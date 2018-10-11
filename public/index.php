@@ -14,9 +14,8 @@ use Phalcon\Mvc\Url as UrlProvider;
 use Phalcon\Db\Adapter\Pdo\Mysql as MysqlPdo;
 use Phalcon\Db\Adapter\Pdo\Postgresql as PostgreSQLPdo;
 use Phalcon\Config\Adapter\Ini;
-
 define('ROOT_DIR', realpath(__DIR__ . '/../'));
-echo ROOT_DIR . '/app/controllers' . PHP_EOL;
+require ROOT_DIR."/app/config/acl.php";
 $loader = new Loader();
 $loader->registerDirs(
     [
@@ -33,7 +32,16 @@ $di->set('view', function () {
     return $view;
 });
 
-$config = new Ini(ROOT_DIR . '/app/config/config.ini');
+$di->set('config', function () {
+    $config = require ROOT_DIR."/app/config/config.php";
+    return $config;
+});
+
+$ini_file = ROOT_DIR . '/app/config/config.ini';
+if (file_exists($ini_file)) {
+    $config = new Ini($ini_file);
+}
+
 $di->set('db', function () use ($config) {
     $database = $config->database;
     $conn = [
@@ -53,6 +61,7 @@ $di->set('db', function () use ($config) {
             break;
     }
 });
+
 
 $application = new Application($di);
 try {

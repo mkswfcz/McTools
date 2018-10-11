@@ -10,7 +10,7 @@ class ArticlesController extends BaseController
 {
     function createAction()
     {
-        $result = Articles::createArticles();
-        echo $result;
+//        $result = Articles::createArticles();
+        echo 'create: article'.PHP_EOL;
     }
 }

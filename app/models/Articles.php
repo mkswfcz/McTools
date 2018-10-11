@@ -8,12 +8,17 @@
  */
 class Articles extends BaseModel
 {
+    static function randIndex($arrays=array())
+    {
+        return mt_rand(0,count($arrays)-1);
+    }
+
     static function createArticles()
     {
-        $libs = ['大','小','光','树'];
+        $libs = ['大', '小', '光', '树'];
         $article = new Articles();
-        $article->id = 1;
-        $article->title = $libs[mt_rand(0,count($libs))].$libs[mt_rand(0,count($libs))];
+        $article->id = 2;
+        $article->title = $libs[self::randIndex($libs)] . $libs[self::randIndex($libs)];
         $article->content = md5(date('Y-m-d H:i:s'));
         $result = $article->save();
         return $result;
