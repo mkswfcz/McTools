@@ -14,6 +14,7 @@ use Phalcon\Mvc\Url as UrlProvider;
 use Phalcon\Db\Adapter\Pdo\Mysql as MysqlPdo;
 use Phalcon\Db\Adapter\Pdo\Postgresql as PostgreSQLPdo;
 use Phalcon\Config\Adapter\Ini;
+
 define('ROOT_DIR', realpath(__DIR__ . '/../'));
 require ROOT_DIR."/app/config/acl.php";
 $loader = new Loader();
@@ -21,7 +22,7 @@ $loader->registerDirs(
     [
         ROOT_DIR . '/app/controllers',
         ROOT_DIR . '/app/models',
-        ROOT_DIR . '/app/views'
+        ROOT_DIR . '/app/views',
     ]
 )->register();
 
