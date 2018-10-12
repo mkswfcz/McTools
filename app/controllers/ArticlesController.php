@@ -10,7 +10,10 @@ class ArticlesController extends BaseController
 {
     function createAction()
     {
-//        $result = Articles::createArticles();
-        echo 'create: article'.PHP_EOL;
+        $result= Articles::createArticles();
+        echo 'Create Result:  '.$result.PHP_EOL;
+    }
+    function indexAction(){
+        $articles = Articles::find();
     }
 }
