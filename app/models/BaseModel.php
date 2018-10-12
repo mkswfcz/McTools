@@ -14,4 +14,21 @@ class BaseModel extends Model
     {
         $this->setConnectionService("db");
     }
+
+    function toJson()
+    {
+        $columns = $this->getColumns();
+        $json=[];
+        foreach ($columns as $column) {
+            $json[$column] = $this->$column;
+        }
+        return $json;
+    }
+
+    function getColumns()
+    {
+        $meta_data = $this->getModelsMetaData();
+        $attributes = $meta_data->getAttributes($this);
+        return $attributes;
+    }
 }

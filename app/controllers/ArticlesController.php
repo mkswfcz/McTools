@@ -11,6 +11,13 @@ class ArticlesController extends BaseController
     function createAction()
     {
 //        $result = Articles::createArticles();
-        echo 'create: article'.PHP_EOL;
+        echo 'create: article' . PHP_EOL;
+    }
+
+    function indexAction()
+    {
+        $article = Articles::findFirstById(1);
+        $json = $article->toJson();
+        print_r($json);
     }
 }
