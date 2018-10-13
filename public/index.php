@@ -14,6 +14,7 @@ $define = realpath(__DIR__.'/../app/config/defined.php');
 require "{$define}";
 
 require APP_ROOT.'/app/config/services.php';
+require APP_ROOT.'/vendor/autoload.php';
 $loader = new Loader();
 $loader->registerDirs(
     [
