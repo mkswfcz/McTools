@@ -58,12 +58,19 @@ $di->set('logger', function (string $file = null, array $line = null) {
     $line = $logger->line;
 
     $loggerFormatterLine = new LoggerFormatterLine($line->format, $line->dateFormat);
+    $dir = $logger->dir;
     $file = $logger->file;
-    if (!file_exists($file)) {
-        file_put_contents($file, '');
+
+    if(!is_dir($dir)){
+        mkdir($dir);
+    }
+    $logfile =$dir.$file;
+    var_dump($logfile);
+    if (!file_exists($logfile)) {
+//        file_put_contents($logfile, '');
     }
 
-    $loggerAdapterFile = new LoggerAdapterFile($file);
+    $loggerAdapterFile = new LoggerAdapterFile($logfile);
     $loggerAdapterFile->setFormatter($loggerFormatterLine);
     return $loggerAdapterFile;
 });

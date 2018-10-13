@@ -24,6 +24,7 @@ return new Phalcon\Config([
             'format' => '[PID ' . posix_getpid() . ' %date%][%type%] %message%',
             'dateFormat' => 'Y-m-d H:i:s',
         ],
-        'file' => APP_ROOT. '/app/logs/main.log'
+        'dir' => APP_ROOT . '/logs/',
+        'file' => 'main.log'
     ]
 ]);
