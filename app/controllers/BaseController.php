@@ -78,14 +78,16 @@ class BaseController extends Controller
 
     function log($content)
     {
-        $app_root = realpath(__DIR__.'/../../').'/';
-        foreach (debug_backtrace() as $key => $value) {
-            $file = str_replace($app_root,'',$value['file']);
-            echo '['.$file.']'.PHP_EOL;
-            break;
+        if (!is_string($content)) {
+            $content = json_encode($content);
         }
-        $log_text = '['.$file.']'.$content;
+        $app_root = realpath(__DIR__ . '/../../') . '/';
+        $traces = debug_backtrace();
+        $real_traces = current($traces);
+
         $logger = $this->getDi()->get('logger');
+        $file = str_replace($app_root, '', $real_traces['file']);
+        $log_text = "[{$file}=>{$real_traces['line']}]" . $content;
         $logger->info($log_text);
     }
 }
