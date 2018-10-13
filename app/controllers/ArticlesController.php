@@ -19,5 +19,6 @@ class ArticlesController extends BaseController
         $article = Articles::findFirstById(1);
         $json = $article->toJson();
         debug($json);
+        info(date('Y-m-d H:i:s',time()),$json);
     }
 }

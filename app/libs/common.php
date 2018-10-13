@@ -1,23 +1,38 @@
 <?php
 
-function clog($content)
+function clog($content, $log_type)
 {
-    if (!is_string($content)) {
-        $content = json_encode($content);
+    $log_text = '';
+    if (is_array($content)) {
+        foreach ($content as $value) {
+            $log_text .= json_encode($value) . '  ';
+        }
+    } elseif (is_object($content)) {
+        $log_text = json_encode($content);
+    }else{
+        $log_text = $content;
     }
     $traces = debug_backtrace();
     $real_traces = current($traces);
 
     $logger = Phalcon\Di::getDefault()->get('logger');
-    $file = str_replace(APP_ROOT.'/', '', $real_traces['file']);
-    $log_text = "[{$file}=>{$real_traces['line']}]" . $content;
-    $logger->info($log_text);
+    $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
+    $log = "[{$file}=>{$real_traces['line']}]" . $log_text;
+    $logger->log($log_type, $log);
     return $log_text;
 }
 
-function debug($messages)
+function debug()
 {
-    $print = clog($messages);
-    echo $print.PHP_EOL;
+    $messages = func_get_args();
+    $print = clog($messages, Phalcon\Logger::DEBUG);
+    echo $print . PHP_EOL;
+}
+
+function info()
+{
+    $messages = func_get_args();
+    $print = clog($messages, Phalcon\Logger::INFO);
+    echo $print . PHP_EOL;
 }
 
