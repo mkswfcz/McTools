@@ -71,8 +71,21 @@ class BaseController extends Controller
     {
         if (isset($_REQUEST[$key])) {
             return $_REQUEST[$key];
-        }else{
+        } else {
             return $default;
         }
+    }
+
+    function log($content)
+    {
+        $app_root = realpath(__DIR__.'/../../').'/';
+        foreach (debug_backtrace() as $key => $value) {
+            $file = str_replace($app_root,'',$value['file']);
+            echo '['.$file.']'.PHP_EOL;
+            break;
+        }
+        $log_text = '['.$file.']'.$content;
+        $logger = $this->getDi()->get('logger');
+        $logger->info($log_text);
     }
 }
