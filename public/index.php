@@ -10,20 +10,20 @@ use Phalcon\Loader;
 use Phalcon\Mvc\Application;
 use Phalcon\Di\FactoryDefault;
 
-define('ROOT_DIR', realpath(__DIR__ . '/../'));
-require ROOT_DIR."/app/config/acl.php";
-require ROOT_DIR.'/app/config/services.php';
+$define = realpath(__DIR__.'/../app/config/defined.php');
+require "{$define}";
 
+require APP_ROOT.'/app/config/services.php';
 $loader = new Loader();
 $loader->registerDirs(
     [
-        ROOT_DIR . '/app/controllers',
-        ROOT_DIR . '/app/models',
-        ROOT_DIR . '/app/views',
-        ROOT_DIR.'app/tasks'
+        APP_ROOT . '/app/controllers',
+        APP_ROOT . '/app/models',
+        APP_ROOT . '/app/views',
+        APP_ROOT . '/app/tasks',
+        APP_ROOT . '/app/libs'
     ]
 )->register();
-
 
 $application = new Application($di);
 try {

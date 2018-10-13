@@ -5,6 +5,7 @@
  * Date: 2018/10/13
  * Time: 上午10:45
  */
+
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Logger\Adapter\File as LoggerAdapterFile;
 use Phalcon\Logger\Formatter\Line as LoggerFormatterLine;
@@ -15,16 +16,17 @@ use Phalcon\Db\Adapter\Pdo\Mysql as MysqlPdo;
 use Phalcon\Db\Adapter\Pdo\Postgresql as PostgreSQLPdo;
 
 
+
 $di = new FactoryDefault();
 
 $di->set('view', function () {
     $view = new View();
-    $view->setViewsDir(ROOT_DIR . '/app/views');
+    $view->setViewsDir(APP_ROOT. '/app/views');
     return $view;
 });
 
 $di->set('config', function () {
-    $config = require ROOT_DIR."/app/config/config.php";
+    $config = require APP_ROOT . "/app/config/config.php";
     return $config;
 });
 
@@ -50,18 +52,30 @@ $di->set('db', function () {
     }
 });
 
-$di->set('logger',function (string $file=null,array $line = null){
+$di->set('logger', function (string $file = null, array $line = null) {
     $config = $this->get('config');
     $logger = $config->logger;
     $line = $logger->line;
 
-    $loggerFormatterLine = new LoggerFormatterLine($line->format,$line->dateFormat);
+    $loggerFormatterLine = new LoggerFormatterLine($line->format, $line->dateFormat);
     $file = $logger->file;
-    if(!file_exists($file)){
-        file_put_contents($file,'');
+    if (!file_exists($file)) {
+        file_put_contents($file, '');
     }
 
     $loggerAdapterFile = new LoggerAdapterFile($file);
     $loggerAdapterFile->setFormatter($loggerFormatterLine);
     return $loggerAdapterFile;
 });
+
+$dirs = $di->get('config')->get('dirs');
+foreach ($dirs as $key => $dir) {
+    $files_stream = scandir($dir);
+    foreach ($files_stream as $file) {
+        $extension = pathinfo($file, PATHINFO_EXTENSION);
+        if ($file != 'services.php' && $file!= 'defined.php' && $extension == 'php' && $extension != 'ini') {
+            $source_file = $dir . $file;
+            require "{$source_file}";
+        }
+    }
+}

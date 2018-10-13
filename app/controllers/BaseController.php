@@ -24,7 +24,6 @@ class BaseController extends Controller
             $role = $this->request('role');
         }
         if (!$this->isAllowed($role, $controller, $action)) {
-
             return $this->respJson(0, 'access not allowed', ['role' => $role]);
         }
     }
@@ -54,7 +53,7 @@ class BaseController extends Controller
     {
         $acl = new AclList();
         $acl->setDefaultAction(Acl::DENY);
-        $acl_list = require ROOT_DIR . '/app/config/acl.php';
+        $acl_list = require APP_ROOT . '/app/config/acl.php';
         foreach ($acl_list as $role => $list) {
             $role_object = new Role($role);
             $acl->addRole($role_object);
@@ -76,18 +75,5 @@ class BaseController extends Controller
         }
     }
 
-    function log($content)
-    {
-        if (!is_string($content)) {
-            $content = json_encode($content);
-        }
-        $app_root = realpath(__DIR__ . '/../../') . '/';
-        $traces = debug_backtrace();
-        $real_traces = current($traces);
 
-        $logger = $this->getDi()->get('logger');
-        $file = str_replace($app_root, '', $real_traces['file']);
-        $log_text = "[{$file}=>{$real_traces['line']}]" . $content;
-        $logger->info($log_text);
-    }
 }

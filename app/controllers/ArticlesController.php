@@ -18,6 +18,6 @@ class ArticlesController extends BaseController
     {
         $article = Articles::findFirstById(1);
         $json = $article->toJson();
-        $this->log($json);
+        debug($json);
     }
 }

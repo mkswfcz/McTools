@@ -5,8 +5,12 @@
  * Date: 2018/10/11
  * Time: 上午11:31
  */
-define('APP_DIR', realpath(__DIR__ . '/../'));
+
 return new Phalcon\Config([
+    'dirs' => [
+        'config' => APP_ROOT . '/app/config/',
+        'libs' => APP_ROOT . '/app/libs/'
+    ],
     'database' => [
         'adapter' => 'PostgresSQL',
         'host' => 'localhost',
@@ -20,6 +24,6 @@ return new Phalcon\Config([
             'format' => '[PID ' . posix_getpid() . ' %date%][%type%] %message%',
             'dateFormat' => 'Y-m-d H:i:s',
         ],
-        'file' => APP_DIR . '/logs/main.log'
+        'file' => APP_ROOT. '/app/logs/main.log'
     ]
 ]);
