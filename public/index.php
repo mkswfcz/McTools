@@ -31,6 +31,6 @@ try {
     $response = $application->handle();
     $response->send();
 } catch (Exception $e) {
-    echo "[" . __FILE__ . ':' . __LINE__ . "]Exception: " . $e->getMessage() . PHP_EOL;
+    debug("Exception :".$e->getMessage());
 }
 

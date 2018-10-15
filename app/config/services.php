@@ -14,8 +14,7 @@ use Phalcon\Mvc\view;
 use Phalcon\Mvc\Url as UrlProvider;
 use Phalcon\Db\Adapter\Pdo\Mysql as MysqlPdo;
 use Phalcon\Db\Adapter\Pdo\Postgresql as PostgreSQLPdo;
-
-
+use Phalcon\Events\Manager;
 
 $di = new FactoryDefault();
 
@@ -65,9 +64,8 @@ $di->set('logger', function (string $file = null, array $line = null) {
         mkdir($dir);
     }
     $logfile =$dir.$file;
-    var_dump($logfile);
     if (!file_exists($logfile)) {
-//        file_put_contents($logfile, '');
+        file_put_contents($logfile, '');
     }
 
     $loggerAdapterFile = new LoggerAdapterFile($logfile);
@@ -86,3 +84,4 @@ foreach ($dirs as $key => $dir) {
         }
     }
 }
+

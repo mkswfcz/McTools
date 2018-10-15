@@ -9,7 +9,7 @@ function clog($content, $log_type)
         }
     } elseif (is_object($content)) {
         $log_text = json_encode($content);
-    }else{
+    } else {
         $log_text = $content;
     }
     $traces = debug_backtrace();
@@ -19,7 +19,7 @@ function clog($content, $log_type)
     $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
     $log = "[{$file}=>{$real_traces['line']}]" . $log_text;
     $logger->log($log_type, $log);
-    return $log_text;
+    return $log;
 }
 
 function debug()
@@ -36,3 +36,23 @@ function info()
     echo $print . PHP_EOL;
 }
 
+function isNull($var)
+{
+    if (empty($var) || is_null($var)) {
+        return true;
+    }
+    return false;
+}
+
+function myDate($time = '', $format = 'Ymd')
+{
+    if ($format == 'Ymd') {
+        if (isNull($time)) {
+            $time = time();
+        }
+        return date('Y-m-d H:i:s ', $time);
+    }
+    if ($format == 'digital') {
+        return strtotime($time);
+    }
+}
