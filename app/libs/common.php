@@ -81,7 +81,7 @@ function post($uri, $headers = array(), $params = array())
         ->autoParse()
         ->send();
     $body = '';
-    if(!$response->hasErrors()){
+    if (!$response->hasErrors()) {
         $body = $response->raw_body;
     }
     return [
@@ -109,4 +109,9 @@ function get($uri, $params = array(), $headers = array())
         'http_code' => $response->code,
         'is_error' => $response->hasErrors()
     ];
+}
+
+function isCli()
+{
+    return php_sapi_name() == 'cli';
 }
