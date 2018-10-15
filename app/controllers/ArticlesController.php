@@ -20,5 +20,7 @@ class ArticlesController extends BaseController
         $json = $article->toJson();
         debug($json);
         info(date('Y-m-d H:i:s',time()),$json);
+        debug(get('https://www.okex.com/api/v1/ticker.do'));
+        debug(post('https://www.okex.com/api/v1/userinfo.do'));
     }
 }

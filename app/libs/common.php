@@ -44,6 +44,23 @@ function isNull($var)
     return false;
 }
 
+function getKey($value, $array = array(), $default = null)
+{
+    $key = array_search($value, $array);
+    if (!$key) {
+        return $default;
+    }
+    return $key;
+}
+
+function getValue($key, $array = array(), $default = null)
+{
+    if (isset($array[$key])) {
+        return $array[$key];
+    }
+    return $default;
+}
+
 function myDate($time = '', $format = 'Ymd')
 {
     if ($format == 'Ymd') {
@@ -55,4 +72,41 @@ function myDate($time = '', $format = 'Ymd')
     if ($format == 'digital') {
         return strtotime($time);
     }
+}
+
+function post($uri, $headers = array(), $params = array())
+{
+    $response = \Httpful\Request::post($uri, $params, \Httpful\Mime::FORM)
+        ->addHeaders($headers)
+        ->autoParse()
+        ->send();
+    $body = '';
+    if(!$response->hasErrors()){
+        $body = $response->raw_body;
+    }
+    return [
+        'header' => $response->headers,
+        'body' => $body,
+        'http_code' => $response->code,
+        'is_error' => $response->hasErrors()
+    ];
+}
+
+function get($uri, $params = array(), $headers = array())
+{
+    if (isNull($params)) {
+        $headers['Content-Type'] = [\Httpful\Mime::FORM];
+    }
+    $response = \Httpful\Request::get($uri)
+        ->timeoutIn(10)
+        ->autoParse()
+        ->send();
+    $header = $response->headers;
+    $body = $response->raw_body;
+    return [
+        'headers' => $header,
+        'body' => $body,
+        'http_code' => $response->code,
+        'is_error' => $response->hasErrors()
+    ];
 }
