@@ -9,4 +9,7 @@
 1. composer
 2. git
 3. redis/ssdb
-
+#phalcon
+##namespace
+1.命名空间与路由(Router)的绑定
+2.通过解析路由,映射对应目录,命名空间(namespace),控制器(controller),方法(action)
