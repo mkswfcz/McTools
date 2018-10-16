@@ -8,7 +8,7 @@
 
 use Phalcon\Loader;
 use Phalcon\Mvc\Application;
-use Phalcon\Di\FactoryDefault;
+use Phalcon\Mvc\Router;
 
 $define = realpath(__DIR__ . '/../app/config/defined.php');
 require "{$define}";
@@ -25,12 +25,28 @@ $loader->registerDirs(
         APP_ROOT . '/app/libs',
         APP_ROOT . '/app/test'
     ]
-)->register();
+);
+
+$controller_dir = APP_ROOT . '/app/controllers/';
+$dirs = glob($controller_dir . '*');
+$namespaces = [];
+foreach ($dirs as $dir) {
+    if (is_dir($dir)) {
+        $name_space = str_replace($controller_dir, '', $dir);
+        $namespaces[$name_space] = [$controller_dir . $name_space];
+    }
+}
+$namespaces['app'] = $controller_dir;
+if (!empty($namespaces)) {
+    var_dump($namespaces);
+    $loader->registerNamespaces($namespaces);
+}
+$loader->register();
 
 $application = new Application($di);
 
 #cli handle IndexController not Found
-if(!isCli()) {
+if (!isCli()) {
     try {
         $response = $application->handle();
         $response->send();

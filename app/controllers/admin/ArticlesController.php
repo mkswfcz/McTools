@@ -6,23 +6,23 @@
  * Date: 2018/10/10
  * Time: 下午6:05
  */
-
+namespace admin;
 class ArticlesController extends BaseController
 {
     function createAction()
     {
 //        $result = Articles::createArticles();
-        echo 'origin create: article1' . PHP_EOL;
+        echo 'create: article admin' . PHP_EOL;
     }
 
     function indexAction()
     {
         $article = \Articles::findFirstById(1);
         $json = $article->toJson();
-        debug($json);
-        var_dump('origin ');
-        info(date('Y-m-d H:i:s', time()), $json);
-        debug(get('https://www.okex.com/api/v1/ticker.do'));
-        debug(post('https://www.okex.com/api/v1/userinfo.do'));
+        debug('admin index');
+//        debug($json);
+//        info(date('Y-m-d H:i:s', time()), $json);
+//        debug(get('https://www.okex.com/api/v1/ticker.do'));
+//        debug(post('https://www.okex.com/api/v1/userinfo.do'));
     }
 }

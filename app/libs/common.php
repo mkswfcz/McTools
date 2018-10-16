@@ -4,8 +4,8 @@ function clog($content, $log_type)
 {
     $log_text = '';
     if (is_array($content)) {
-        foreach ($content as $value) {
-            $log_text .= json_encode($value) . '  ';
+        foreach ($content as $key => $value) {
+            $log_text .= json_encode($key) . '=>' . json_encode($value) . '  ';
         }
     } elseif (is_object($content)) {
         $log_text = json_encode($content);

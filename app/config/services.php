@@ -15,12 +15,13 @@ use Phalcon\Mvc\Url as UrlProvider;
 use Phalcon\Db\Adapter\Pdo\Mysql as MysqlPdo;
 use Phalcon\Db\Adapter\Pdo\Postgresql as PostgreSQLPdo;
 use Phalcon\Events\Manager;
+use Phalcon\Mvc\Dispatcher;
 
 $di = new FactoryDefault();
 
 $di->set('view', function () {
     $view = new View();
-    $view->setViewsDir(APP_ROOT. '/app/views');
+    $view->setViewsDir(APP_ROOT . '/app/views');
     return $view;
 });
 
@@ -60,10 +61,10 @@ $di->set('logger', function (string $file = null, array $line = null) {
     $dir = $logger->dir;
     $file = $logger->file;
 
-    if(!is_dir($dir)){
+    if (!is_dir($dir)) {
         mkdir($dir);
     }
-    $logfile =$dir.$file;
+    $logfile = $dir . $file;
     if (!file_exists($logfile)) {
         file_put_contents($logfile, '');
     }
@@ -78,7 +79,7 @@ foreach ($dirs as $key => $dir) {
     $files_stream = scandir($dir);
     foreach ($files_stream as $file) {
         $extension = pathinfo($file, PATHINFO_EXTENSION);
-        if ($file != 'services.php' && $file!= 'defined.php' && $extension == 'php' && $extension != 'ini') {
+        if ($file != 'services.php' && $file != 'defined.php' && $extension == 'php' && $extension != 'ini') {
             $source_file = $dir . $file;
             require "{$source_file}";
         }
