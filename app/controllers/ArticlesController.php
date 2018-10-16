@@ -12,6 +12,7 @@ class ArticlesController extends BaseController
     function createAction()
     {
 //        $result = Articles::createArticles();
+        debug($this->request('id'));
         echo 'origin create: article1' . PHP_EOL;
     }
 

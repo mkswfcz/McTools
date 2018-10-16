@@ -16,6 +16,9 @@ use Phalcon\Db\Adapter\Pdo\Mysql as MysqlPdo;
 use Phalcon\Db\Adapter\Pdo\Postgresql as PostgreSQLPdo;
 use Phalcon\Events\Manager;
 use Phalcon\Mvc\Dispatcher;
+use Phalcon\Events\Event;
+use Phalcon\Mvc\Router;
+
 
 $di = new FactoryDefault();
 
@@ -72,6 +75,33 @@ $di->set('logger', function (string $file = null, array $line = null) {
     $loggerAdapterFile = new LoggerAdapterFile($logfile);
     $loggerAdapterFile->setFormatter($loggerFormatterLine);
     return $loggerAdapterFile;
+});
+
+$di->set('dispatcher', function () {
+    $dispatcher = new Dispatcher();
+    $eventsManager = new Manager();
+    $eventsManager->attach(
+        'dispatch', function (Event $event, $dispatcher) {
+//            debug($event,$dispatcher);
+    });
+    $dispatcher->setEventsManager($eventsManager);
+    return $dispatcher;
+});
+
+$di->set('router', function () {
+    $router = new Router();
+    $uri = $router->getRewriteUri();
+    list($namespace, $controller, $action) = parseUri($uri);
+//    debug('uri: ',$namespace,$controller,$action);
+    $router->add(
+        $uri,
+        [
+            'namespace' => $namespace,
+            'controller' => $controller,
+            'action' => $action,
+        ]
+    );
+    return $router;
 });
 
 $dirs = $di->get('config')->get('dirs');
