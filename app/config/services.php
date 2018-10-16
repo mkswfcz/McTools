@@ -78,12 +78,26 @@ $di->set('logger', function (string $file = null, array $line = null) {
 });
 
 $di->set('dispatcher', function () {
-    $dispatcher = new Dispatcher();
     $eventsManager = new Manager();
+    #bind 循环调度事件
     $eventsManager->attach(
-        'dispatch', function (Event $event, $dispatcher) {
-//            debug($event,$dispatcher);
+        'dispatch:beforeDispatchLoop', function (Event $event, $dispatcher) {
+        $clazz = $dispatcher->getHandlerClass();
+        if (!class_exists($clazz)) {
+            $dispatcher->forward(['controller' => 'Handler', 'action' => 'route404']);
+        }
     });
+
+    $eventsManager->attach(
+        'dispatch:beforeExecuteRoute', function (Event $event, $dispatcher) {
+        $clazz = $dispatcher->getHandlerClass();
+        $handler = $this->getShared($clazz);
+        if (method_exists($handler, 'beforeAction')) {
+            $handler->beforeAction($dispatcher);
+            $handler->view->disable();
+        }
+    });
+    $dispatcher = new Dispatcher();
     $dispatcher->setEventsManager($eventsManager);
     return $dispatcher;
 });

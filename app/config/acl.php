@@ -6,10 +6,9 @@
  * Time: 上午11:28
  */
 
+#禁止访问列表
 return [
-    'admin'=>[
-        'Articles'=>[
-            '*'
-        ]
-    ]
+    'admin' => [
+        'articles'=> 'test'
+    ],
 ];

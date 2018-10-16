@@ -9,6 +9,11 @@
 
 class ArticlesController extends BaseController
 {
+    function beforeAction()
+    {
+        debug('before: ',time());
+    }
+
     function createAction()
     {
 //        $result = Articles::createArticles();
