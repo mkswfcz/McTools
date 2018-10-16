@@ -1,6 +1,6 @@
 <?php
 
-function clog($content, $log_type)
+function clog($content, $log_type, $location = '')
 {
     $log_text = '';
     if (is_array($content)) {
@@ -17,22 +17,33 @@ function clog($content, $log_type)
 
     $logger = Phalcon\Di::getDefault()->get('logger');
     $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
-    $log = "[{$file}=>{$real_traces['line']}]" . $log_text;
+    if (empty($location)) {
+        $location = "[{$file}=>{$real_traces['line']}]";
+    }
+    $log = $location . $log_text;
     $logger->log($log_type, $log);
     return $log;
 }
 
 function debug()
 {
+    $traces = debug_backtrace();
+    $real_traces = current($traces);
+    $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
+
     $messages = func_get_args();
-    $print = clog($messages, Phalcon\Logger::DEBUG);
+    $print = clog($messages, Phalcon\Logger::DEBUG,"[{$file}=>{$real_traces['line']}]");
     echo $print . PHP_EOL;
 }
 
 function info()
 {
+    $traces = debug_backtrace();
+    $real_traces = current($traces);
+    $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
+
     $messages = func_get_args();
-    $print = clog($messages, Phalcon\Logger::INFO);
+    $print = clog($messages, Phalcon\Logger::INFO,"[{$file}=>{$real_traces['line']}]");
     echo $print . PHP_EOL;
 }
 
