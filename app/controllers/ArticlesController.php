@@ -29,6 +29,6 @@ class ArticlesController extends BaseController
 //        info(date('Y-m-d H:i:s', time()), $json);
 //        debug(get('https://www.okex.com/api/v1/ticker.do'));
 //        debug(post('https://www.okex.com/api/v1/userinfo.do'));
-        $this->view->title = 'origin create root';
+        $this->view->setVar('title','origin create root');
     }
 }

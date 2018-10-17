@@ -21,7 +21,7 @@ class BaseController extends Controller
         $action = $dispatcher->getActionName();
         $controller = $dispatcher->getControllerName();
         if (!$this->request('role')) {
-            $role = 'admin';
+            $role = 'root';
         } else {
             $role = $this->request('role');
         }
@@ -54,7 +54,7 @@ class BaseController extends Controller
     function getAcl()
     {
         $acl = new AclList();
-        $acl->setDefaultAction(Acl::DENY);
+        $acl->setDefaultAction(Acl::ALLOW);
         $acl_list = require APP_ROOT . '/app/config/acl.php';
         foreach ($acl_list as $role => $list) {
             $role_object = new Role($role);
@@ -62,7 +62,8 @@ class BaseController extends Controller
             foreach ($list as $controller => $action) {
                 $resource = new Resource(strtolower($controller));
                 $acl->addResource($resource, $action);
-                $acl->allow($role, strtolower($controller), $action);
+//                debug($role,$controller,$action);
+                $acl->deny($role, strtolower($controller), $action);
             }
         }
         return $acl;

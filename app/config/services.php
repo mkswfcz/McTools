@@ -23,21 +23,22 @@ use Phalcon\Mvc\Router;
 
 $di = new FactoryDefault();
 
-$di->set('voltService',function ($view,$di){
-    $volt = new Volt($view,$di);
-    $volt->setOptions(
-        [
-            "compiledPath"=> APP_ROOT.'/app/cache/',
-            'compiledExtension' => '.compiled'
-        ]
-    );
-    return $volt;
-});
 $di->set('view', function () {
     $view = new View();
     $view->setViewsDir(APP_ROOT . '/app/views');
     $view->registerEngines([
-        ".volt" => "Phalcon\\Mvc\\View\\Engine\\Volt"
+        ".volt" => function ($view, $di) {
+            $volt = new  Volt($view,$di);
+            $volt->setOptiions([
+                'compileAlways' => false,
+                'compiledPath' => function () {
+                if(!is_dir(APP_ROOT.'/app/cache')){
+                    var_dump(APP_ROOT.'/app/cache');
+                    mkdir(APP_ROOT.'/app/cache');
+                }
+            }]);
+            return $volt;
+        }
     ]);
     return $view;
 });
@@ -138,7 +139,7 @@ foreach ($dirs as $key => $dir) {
     $files_stream = scandir($dir);
     foreach ($files_stream as $file) {
         $extension = pathinfo($file, PATHINFO_EXTENSION);
-        if ($file != 'services.php' && $file!='defined.php'&& $extension == 'php' && $extension != 'ini') {
+        if ($file != 'services.php' && $file != 'defined.php' && $extension == 'php' && $extension != 'ini') {
             $source_file = $dir . $file;
             require "{$source_file}";
         }
