@@ -61,8 +61,7 @@ class BaseController extends Controller
                 $resource = new Resource(strtolower($controller));
                 $acl->addResource($resource, $action);
 //                debug($role,$controller,$action);
-                $result = $acl->deny($role, strtolower($controller), $action);
-                debug('res: ',$result);
+                $acl->deny($role, strtolower($controller), $action);
             }
         }
         return $acl;
