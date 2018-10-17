@@ -18,6 +18,7 @@ class BaseController extends Controller
     {
         $action = $dispatcher->getActionName();
         $controller = $dispatcher->getControllerName();
+        debug('action: ',$action,$controller);
         if (!$this->request('role')) {
             $role = 'root';
         } else {
@@ -60,7 +61,6 @@ class BaseController extends Controller
             foreach ($list as $controller => $action) {
                 $resource = new Resource(strtolower($controller));
                 $acl->addResource($resource, $action);
-//                debug($role,$controller,$action);
                 $acl->deny($role, strtolower($controller), $action);
             }
         }
@@ -76,5 +76,12 @@ class BaseController extends Controller
         }
     }
 
+    function afterAction($dispatcher)
+    {
+        $action = $dispatcher->getActionName();
+        $namespace = $dispatcher->getNamespaceName();
+        $controller = $dispatcher->getControllerName();
+//        $this->view->pick();
+    }
 
 }

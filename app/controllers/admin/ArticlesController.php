@@ -20,6 +20,7 @@ class ArticlesController extends BaseController
         $article = \Articles::findFirstById(1);
         $json = $article->toJson();
         debug('admin index');
+        $this->view->build=23;
 //        debug($json);
 //        info(date('Y-m-d H:i:s', time()), $json);
 //        debug(get('https://www.okex.com/api/v1/ticker.do'));

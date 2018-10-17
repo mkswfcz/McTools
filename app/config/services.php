@@ -10,7 +10,7 @@ use Phalcon\Di\FactoryDefault;
 use Phalcon\Logger\Adapter\File as LoggerAdapterFile;
 use Phalcon\Logger\Formatter\Line as LoggerFormatterLine;
 use Phalcon\Config\Adapter\Ini;
-use Phalcon\Mvc\view;
+use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Volt;
 use Phalcon\Mvc\Url as UrlProvider;
 use Phalcon\Db\Adapter\Pdo\Mysql as MysqlPdo;
@@ -23,25 +23,6 @@ use Phalcon\Mvc\Router;
 
 $di = new FactoryDefault();
 
-$di->set('view', function () {
-    $view = new View();
-    $view->setViewsDir(APP_ROOT . '/app/views');
-    $view->registerEngines([
-        ".volt" => function ($view, $di) {
-            $volt = new  Volt($view,$di);
-            $volt->setOptiions([
-                'compileAlways' => false,
-                'compiledPath' => function () {
-                if(!is_dir(APP_ROOT.'/app/cache')){
-                    var_dump(APP_ROOT.'/app/cache');
-                    mkdir(APP_ROOT.'/app/cache');
-                }
-            }]);
-            return $volt;
-        }
-    ]);
-    return $view;
-});
 
 $di->set('config', function () {
     $config = require APP_ROOT . "/app/config/config.php";
@@ -92,15 +73,21 @@ $di->set('logger', function (string $file = null, array $line = null) {
     return $loggerAdapterFile;
 });
 
+#循环调度控制转发volt,循环调度优先级
 $di->set('dispatcher', function () {
     $eventsManager = new Manager();
     #bind 循环调度事件
     $eventsManager->attach(
         'dispatch:beforeDispatchLoop', function (Event $event, $dispatcher) {
         $clazz = $dispatcher->getHandlerClass();
-        if (!class_exists($clazz)) {
-            $dispatcher->forward(['controller' => 'Handler', 'action' => 'route404']);
+        $class = explode('\\', $clazz);
+        var_dump('clazz: ', $class);
+        if (isset($class[1])) {
+
         }
+//        if (!class_exists($clazz)) {
+//            $dispatcher->forward(['controller' => 'Handler', 'action' => 'route404']);
+//        }
     });
 
     $eventsManager->attach(
@@ -112,6 +99,13 @@ $di->set('dispatcher', function () {
             $handler->view->disable();
         }
     });
+    $eventsManager->attach('dispatch:afterDispatchLoop', function (Event $event, $dispatcher) {
+        $clazz = $dispatcher->getHandlerClass();
+        $handler = $this->getShared($clazz);
+        if (method_exists($handler, 'afterAction')) {
+            $handler->afterAction($dispatcher);
+        }
+    });
     $dispatcher = new Dispatcher();
     $dispatcher->setEventsManager($eventsManager);
     return $dispatcher;
@@ -121,7 +115,7 @@ $di->set('router', function () {
     $router = new Router();
     $uri = $router->getRewriteUri();
     list($namespace, $controller, $action) = parseUri($uri);
-//    debug('uri: ',$namespace,$controller,$action);
+    debug('uri: ', $uri, $namespace, $controller, $action);
     $router->add(
         $uri,
         [
@@ -132,6 +126,32 @@ $di->set('router', function () {
     );
     return $router;
 });
+
+$di->set('view', function () {
+    $view = new View();
+    $view->setViewsDir(APP_ROOT . '/app/views/');
+    $view->registerEngines([
+        ".volt" => function ($view, $di) {
+            $volt = new  Volt($view, $di);
+            $volt->setOptions([
+                'compiledPath' => function ($templatePath) {
+                    $dirName = dirname($templatePath);
+                    $file = str_replace($dirName . '/', '', $templatePath);
+                    $path = APP_ROOT . '/app/cache/volt/';
+                    if (!is_dir($path)) {
+                        mkdir($path, 0777, true);
+                    }
+                    $compiled_file = $path . str_replace('/', '_', $dirName) . $file . '.php';
+                    return $compiled_file;
+                },
+                'compileAlways' => false
+            ]);
+            return $volt;
+        }
+    ]);
+    return $view;
+});
+
 
 #load config—files
 $dirs = $di->get('config')->get('dirs');

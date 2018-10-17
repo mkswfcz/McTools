@@ -2,3 +2,4 @@ vendor/*
 *.iml
 *.xml
 logs/*
+app/cache/*
