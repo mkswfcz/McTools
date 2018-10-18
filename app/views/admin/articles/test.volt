@@ -1,1 +1,1 @@
-{{ test }}
+<div class="list_card"> {{ test }} </div>
