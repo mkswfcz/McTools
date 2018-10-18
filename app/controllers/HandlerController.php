@@ -11,6 +11,7 @@ class HandlerController extends BaseController
     function route404Action()
     {
         $this->view->disable();
-        echo '404 NotFound (Controller Not Exists)';
+        echo '<div style="font:28px bolder;  text-align:center; margin-top: 120px;">
+                <strong>404 NotFound (Controller Not Exists)</strong></div>';
     }
 }

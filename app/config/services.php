@@ -110,7 +110,7 @@ $di->set('router', function () {
     $router = new Router();
     $uri = $router->getRewriteUri();
     list($namespace, $controller, $action) = parseUri($uri);
-    debug('uri: ', $uri, $namespace, $controller, $action);
+//    debug('uri: ', $uri, $namespace, $controller, $action);
     $router->add(
         $uri,
         [
