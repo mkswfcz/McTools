@@ -18,7 +18,7 @@ class BaseModel extends Model
     function toJson()
     {
         $columns = $this->getColumns();
-        $json=[];
+        $json = [];
         foreach ($columns as $column) {
             $json[$column] = $this->$column;
         }
@@ -30,5 +30,14 @@ class BaseModel extends Model
         $meta_data = $this->getModelsMetaData();
         $attributes = $meta_data->getAttributes($this);
         return $attributes;
+    }
+
+    static function findLast($conditions = array())
+    {
+        if (empty($conditions)) {
+            $conditions['order'] = 'id desc';
+            $conditions['limit'] = 1;
+        }
+        return self::find($conditions);
     }
 }

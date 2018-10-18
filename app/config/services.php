@@ -126,6 +126,7 @@ $di->set('router', function () {
 $di->set('view', function () {
     $view = new View();
     $view->setViewsDir(APP_ROOT . '/app/views/');
+    $view->setLayoutsDir('layouts/');
     $view->registerEngines([
         ".volt" => function ($view, $di) {
             $volt = new  Volt($view, $di);
