@@ -18,7 +18,6 @@ class BaseController extends Controller
     {
         $action = $dispatcher->getActionName();
         $controller = $dispatcher->getControllerName();
-        debug('action: ',$action,$controller);
         if (!$this->request('role')) {
             $role = 'root';
         } else {

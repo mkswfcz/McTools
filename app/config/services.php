@@ -80,14 +80,9 @@ $di->set('dispatcher', function () {
     $eventsManager->attach(
         'dispatch:beforeDispatchLoop', function (Event $event, $dispatcher) {
         $clazz = $dispatcher->getHandlerClass();
-        $class = explode('\\', $clazz);
-        var_dump('clazz: ', $class);
-        if (isset($class[1])) {
-
+        if (!class_exists($clazz)) {
+            $dispatcher->forward(['namespace'=>'','controller' => 'Handler', 'action' => 'route404','params'=>[$clazz]]);
         }
-//        if (!class_exists($clazz)) {
-//            $dispatcher->forward(['controller' => 'Handler', 'action' => 'route404']);
-//        }
     });
 
     $eventsManager->attach(
