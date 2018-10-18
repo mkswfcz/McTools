@@ -19,6 +19,7 @@ use Phalcon\Events\Manager;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\Router;
+use Phalcon\Session\Adapter\Files as Session;
 
 
 $di = new FactoryDefault();
@@ -81,7 +82,7 @@ $di->set('dispatcher', function () {
         'dispatch:beforeDispatchLoop', function (Event $event, $dispatcher) {
         $clazz = $dispatcher->getHandlerClass();
         if (!class_exists($clazz)) {
-            $dispatcher->forward(['namespace'=>'','controller' => 'Handler', 'action' => 'route404','params'=>[$clazz]]);
+            $dispatcher->forward(['namespace' => '', 'controller' => 'Handler', 'action' => 'route404', 'params' => [$clazz]]);
         }
     });
 
@@ -98,7 +99,7 @@ $di->set('dispatcher', function () {
         $clazz = $dispatcher->getHandlerClass();
         $handler = $this->getShared($clazz);
         if (method_exists($handler, 'afterAction')) {
-            return  $handler->afterAction($dispatcher);
+            return $handler->afterAction($dispatcher);
         }
     });
     $dispatcher = new Dispatcher();
@@ -148,6 +149,11 @@ $di->set('view', function () {
     return $view;
 });
 
+$di->setShared('session', function () {
+    $session = new Session();
+    $session->start();
+    return $session;
+});
 
 #load config—files
 $dirs = $di->get('config')->get('dirs');

@@ -20,11 +20,13 @@ class ArticlesController extends \BaseController
     {
         $article = \Articles::findFirstById(1);
         $json = $article->toJson();
+        $this->session->set('user_name','tom');
         $this->view->build = 'this is admin/articles/index';
     }
 
     function testAction()
     {
-        $this->view->test = 'admin/testAction';
+        $user_name = $this->session->get('user_name');
+        $this->view->test = 'admin/testAction'.$user_name;
     }
 }
