@@ -6,8 +6,8 @@
  * Date: 2018/10/10
  * Time: 下午6:05
  */
-
-class ArticlesController extends BaseController
+namespace front;
+class ArticlesController extends \BaseController
 {
     function beforeAction()
     {
@@ -22,14 +22,15 @@ class ArticlesController extends BaseController
 
     function indexAction()
     {
-        $article = \Articles::findFirstById(1);
-        $json = $article->toJson();
+//        $article = \Articles::findFirstById(1);
+//        $json = $article->toJson();
 //        debug($json);
 //        var_dump('origin ');
 //        info(date('Y-m-d H:i:s', time()), $json);
 //        debug(get('https://www.okex.com/api/v1/ticker.do'));
 //        debug(post('https://www.okex.com/api/v1/userinfo.do'));
-        $this->view->title = 'qwerty';
-        debug('index');
+        $this->view->setVar('title', 'qwerty');
+        debug('root index');
+//        debug('index');
     }
 }

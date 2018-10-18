@@ -60,6 +60,7 @@ class BaseController extends Controller
             foreach ($list as $controller => $action) {
                 $resource = new Resource(strtolower($controller));
                 $acl->addResource($resource, $action);
+//                debug($role,$controller,$action);
                 $acl->deny($role, strtolower($controller), $action);
             }
         }
@@ -75,12 +76,23 @@ class BaseController extends Controller
         }
     }
 
+    #动态绑定视图
     function afterAction($dispatcher)
     {
-        $action = $dispatcher->getActionName();
         $namespace = $dispatcher->getNamespaceName();
         $controller = $dispatcher->getControllerName();
-//        $this->view->pick();
+        $action = $dispatcher->getActionName();
+//        debug('after', $action, $namespace, $controller);
+        #根据路由选择视图,view is_enable?
+        $this->view->enable();
+        if (!empty($namespace)) {
+            $pick_view = $namespace . '/' . $controller . '/' . $action;
+            $this->view->pick($pick_view);
+        } else {
+            $pick_view = $controller . '/' . $action;
+            $this->view->pick($pick_view);
+        }
     }
+
 
 }

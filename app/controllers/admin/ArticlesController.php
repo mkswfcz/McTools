@@ -6,12 +6,13 @@
  * Date: 2018/10/10
  * Time: 下午6:05
  */
+
 namespace admin;
-class ArticlesController extends BaseController
+class ArticlesController extends \BaseController
 {
     function createAction()
     {
-//        $result = Articles::createArticles();
+        //$result = Articles::createArticles();
         echo 'create: article admin' . PHP_EOL;
     }
 
@@ -19,11 +20,11 @@ class ArticlesController extends BaseController
     {
         $article = \Articles::findFirstById(1);
         $json = $article->toJson();
-        debug('admin index');
-        $this->view->build=23;
-//        debug($json);
-//        info(date('Y-m-d H:i:s', time()), $json);
-//        debug(get('https://www.okex.com/api/v1/ticker.do'));
-//        debug(post('https://www.okex.com/api/v1/userinfo.do'));
+        $this->view->build = 'this is admin/articles/index';
+    }
+
+    function testAction()
+    {
+        $this->view->test = 'admin/testAction';
     }
 }

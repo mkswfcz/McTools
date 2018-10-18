@@ -18,7 +18,7 @@ function getSpaceDirs($no_prefix = false)
     foreach ($dirs as $dir) {
         if (is_dir($dir)) {
             if ($no_prefix) {
-                $dir = str_replace($controller_dir,'',$dir);
+                $dir = str_replace($controller_dir, '', $dir);
             }
             $space_dirs[] = $dir;
         }
@@ -32,8 +32,8 @@ function loadRouters()
     $controller_dir = getControllerDir();
     $namespaces['app'] = $controller_dir;
     foreach ($dir_names as $namespace) {
-            $space_path = $controller_dir . $namespace . '/';
-            $namespaces[$namespace] = $space_path;
+        $space_path = $controller_dir . $namespace . '/';
+        $namespaces[$namespace] = $space_path;
     }
     return $namespaces;
 }
@@ -69,7 +69,9 @@ function parseUri($uri)
     $namespace = getValue($space_key, $uri_parts, '');
     $controller = getValue($controller_key, $uri_parts, '');
     $action = getValue($action_key, $uri_parts, '');
-
+    if (empty($namespace)) {
+        $namespace = 'front';
+    }
     return [$namespace, $controller, $action];
 }
 

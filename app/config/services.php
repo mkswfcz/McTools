@@ -98,7 +98,7 @@ $di->set('dispatcher', function () {
         $clazz = $dispatcher->getHandlerClass();
         $handler = $this->getShared($clazz);
         if (method_exists($handler, 'afterAction')) {
-            $handler->afterAction($dispatcher);
+            return  $handler->afterAction($dispatcher);
         }
     });
     $dispatcher = new Dispatcher();
@@ -144,6 +144,7 @@ $di->set('view', function () {
             return $volt;
         }
     ]);
+    $view->enable();
     return $view;
 });
 
