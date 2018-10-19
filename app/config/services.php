@@ -112,8 +112,8 @@ $di->set('router', function () {
     $uri = $router->getRewriteUri();
     list($namespace, $controller, $action) = parseUri($uri);
 //    debug('uri: ', $uri, $namespace, $controller, $action);
-    if($controller=='favicon.ico'){
-        $uri = $uri.'/images';
+    if ($controller == 'favicon.ico') {
+        $uri = $uri . '/images';
     }
     $router->add(
         $uri,
@@ -146,6 +146,15 @@ $di->set('view', function () {
                 },
                 'compileAlways' => false
             ]);
+            $compiler = $volt->getCompiler();
+            $reflect = new ReflectionClass('voltFun');
+            $methods = $reflect->getMethods();
+            foreach ($methods as $method) {
+                $name = $method->name;
+                $compiler->addFunction($name, function ($args, $exprArgs) use ($name) {
+                    return '\voltFun::' . $name . '(' . $args . ')';
+                });
+            }
             return $volt;
         }
     ]);
