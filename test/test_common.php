@@ -11,9 +11,9 @@ debug('time: ', myDate(), myDate('2018-10-15 10:54:57', 'digital'));
 $article = Articles::findFirstById(1);
 $reflect = new ReflectionClass($article);
 $methods = $reflect->getMethods();
-foreach ($methods as $method) {
-    var_dump($method->name);
-}
+//foreach ($methods as $method) {
+//    var_dump($method->name);
+//}
 
 $volt = new voltFun();
-echo $volt::dirLink(['title1'=>['u_1'=>'link1','u_2'=>'link_2'],'title2'=>['2u_1'=>'link2-1']]).PHP_EOL;
+$volt::dirLink(['title1'=>['u1'=>'#','u2'=>'#'],'title2'=>['x1'=>'#','x2'=>'#'],'title3'=>['z1'=>'#','z2'=>'#']]).PHP_EOL;
