@@ -14,10 +14,36 @@ use Phalcon\Acl\Resource;
 
 class BaseController extends Controller
 {
+    function parseDispatcher($dispatch)
+    {
+        $namespace = $dispatch->getNamespaceName();
+        $controller = $dispatch->getControllerName();
+        $action = $dispatch->getActionName();
+        return [$namespace, $controller, $action];
+    }
+
+    #动态加载静态文件
+    function setStaticFiles($namespace, $controller, $action, $file_type = 'css')
+    {
+        if (!$namespace) {
+            return false;
+        }
+        $css_root = $file_type . '/' . $namespace . '/';
+        $extension = '.' . $file_type;
+        $css_files = [];
+        $css_files[] = $css_root . $namespace . $extension;
+        $css_files[] = $css_root . '/' . $controller . '/' . $controller . $extension;
+        $css_files[] = $css_root . '/' . $controller . '/' . $action . $extension;
+        foreach ($css_files as $file) {
+            if (file_exists($file)) {
+                $this->assets->addCss($file);
+            }
+        }
+    }
+
     function beforeExecuteRoute($dispatcher)
     {
-        $action = $dispatcher->getActionName();
-        $controller = $dispatcher->getControllerName();
+        list($namespace, $controller, $action) = $this->parseDispatcher($dispatcher);
         if (!$this->request('role')) {
             $role = 'root';
         } else {
@@ -26,7 +52,8 @@ class BaseController extends Controller
         if (!$this->isAllowed($role, $controller, $action)) {
             return $this->respJson(0, 'access not allowed', ['role' => $role]);
         }
-//        debug($dispatcher->getUri());
+        $this->setStaticFiles($namespace, $controller, $action);
+        $this->setStaticFiles($namespace, $controller, $action, 'js');
     }
 
     function isAllowed($role, $controller, $action)
@@ -80,9 +107,7 @@ class BaseController extends Controller
     #动态绑定视图
     function afterAction($dispatcher)
     {
-        $namespace = $dispatcher->getNamespaceName();
-        $controller = $dispatcher->getControllerName();
-        $action = $dispatcher->getActionName();
+        list($namespace, $controller, $action) = $this->parseDispatcher($dispatcher);
 //        debug('after', $action, $namespace, $controller);
         #根据路由选择视图,view is_enable?
         $this->view->enable();

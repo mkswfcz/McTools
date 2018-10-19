@@ -71,6 +71,11 @@ function parseUri($uri)
     $action = getValue($action_key, $uri_parts, '');
     if (empty($namespace)) {
         $namespace = 'front';
+        if ($controller == 'admin') {
+            $namespace = 'admin';
+            $controller = 'init';
+            $action = 'index';
+        }
     }
     return [$namespace, $controller, $action];
 }

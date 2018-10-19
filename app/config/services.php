@@ -112,6 +112,9 @@ $di->set('router', function () {
     $uri = $router->getRewriteUri();
     list($namespace, $controller, $action) = parseUri($uri);
 //    debug('uri: ', $uri, $namespace, $controller, $action);
+    if($controller=='favicon.ico'){
+        $uri = $uri.'/images';
+    }
     $router->add(
         $uri,
         [

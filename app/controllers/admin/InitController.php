@@ -8,7 +8,7 @@
  */
 
 namespace admin;
-class InitController extends BaseController
+class InitController extends \BaseController
 {
     function indexAction()
     {

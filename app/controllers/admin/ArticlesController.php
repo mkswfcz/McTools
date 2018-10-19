@@ -28,7 +28,6 @@ class ArticlesController extends \BaseController
     {
         $user_name = $this->session->get('user_name');
         $this->view->test = 'namespace/testAction'.$user_name;
-
         $article = \Articles::findLast();
         debug($article);
     }
