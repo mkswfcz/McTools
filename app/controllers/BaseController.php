@@ -26,6 +26,7 @@ class BaseController extends Controller
         if (!$this->isAllowed($role, $controller, $action)) {
             return $this->respJson(0, 'access not allowed', ['role' => $role]);
         }
+//        debug($dispatcher->getUri());
     }
 
     function isAllowed($role, $controller, $action)
@@ -38,7 +39,7 @@ class BaseController extends Controller
         return true;
     }
 
-    function respJson($error_code, string $error_reason, array $data)
+    function respJson($error_code, string $error_reason, array $data = array())
     {
         $result['error_code'] = $error_code;
         $result['error_reason'] = $error_reason;
