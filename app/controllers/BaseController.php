@@ -32,8 +32,8 @@ class BaseController extends Controller
         $extension = '.' . $file_type;
         $css_files = [];
         $css_files[] = $css_root . $namespace . $extension;
-        $css_files[] = $css_root . '/' . $controller . '/' . $controller . $extension;
-        $css_files[] = $css_root . '/' . $controller . '/' . $action . $extension;
+        $css_files[] = $css_root . $controller . '/' . $controller . $extension;
+        $css_files[] = $css_root . $controller . '/' . $action . $extension;
         foreach ($css_files as $file) {
             if (file_exists($file)) {
                 $this->assets->addCss($file);
