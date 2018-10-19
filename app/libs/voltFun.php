@@ -15,7 +15,7 @@ class voltFun
     {
         $real_link = '';
         foreach ($links as $title => $link) {
-            $real_link .= self::link($link, $title) . '<br>';
+            $real_link .= '<p style="border: solid 1px;border-radius: 5px;">'.self::link($link, $title).'</p>';
         }
         return $real_link;
     }

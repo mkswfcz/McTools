@@ -15,7 +15,7 @@
 </style>
 <body>
 <div class="card">
- {{ dirLink(['AMark':['Login':'#','Register':'#']]) }}
+ {{ dirLink(['AMark':['Login':'#','Register':'#'],'Test':['v1':'hello','v2':'world']]) }}
 
 </div>
 {{ content() }}
