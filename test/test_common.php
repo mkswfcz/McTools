@@ -16,4 +16,4 @@ foreach ($methods as $method) {
 }
 
 $volt = new voltFun();
-echo $volt->dirLink(['title1'=>['u_1'=>'link1','u_2'=>'link_2'],'title2'=>['2u_1'=>'link2-1']]);
+echo $volt::dirLink(['title1'=>['u_1'=>'link1','u_2'=>'link_2'],'title2'=>['2u_1'=>'link2-1']]).PHP_EOL;
