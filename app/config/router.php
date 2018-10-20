@@ -44,6 +44,9 @@ function parseUri($uri)
     $uri_parts = explode('/', $uri);
     $uri_parts = array_filter($uri_parts);
     $count = count($uri_parts);
+    if ($count === 0) {
+        return ['front','init','index'];
+    }
     switch ($count) {
         case 1:
             $space_key = -1;

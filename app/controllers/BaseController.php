@@ -132,7 +132,9 @@ class BaseController extends Controller
         $this->view->enable();
         if (!empty($namespace)) {
             $pick_view = $namespace . '/' . $controller . '/' . $action;
-            $this->view->setTemplateAfter($namespace);
+            if (file_exists(APP_ROOT.'/app/views/layouts/'.$namespace.'.volt')) {
+                $this->view->setTemplateAfter($namespace);
+            }
             $this->view->pick($pick_view);
         } else {
             $pick_view = $controller . '/' . $action;
