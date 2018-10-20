@@ -4,18 +4,19 @@ class voltFun
 {
     static function form()
     {
+
     }
 
     static function link($uri, $title)
     {
-        return "<a style='text-decoration: none' href=$uri >$title</a>";
+        return "<a class ='list-group-item' style='text-decoration: none' href=$uri >$title</a>";
     }
 
     static function rowLink($links)
     {
         $real_link = '';
         foreach ($links as $title => $link) {
-            $real_link .= '<p style="border: solid 1px;border-radius: 5px;">' . self::link($link, $title) . '</p>';
+            $real_link .= self::link($link, $title);
         }
         return $real_link;
     }
