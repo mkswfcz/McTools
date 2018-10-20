@@ -15,23 +15,27 @@ class voltFun
     {
         $real_link = '';
         foreach ($links as $title => $link) {
-            $real_link .= '<p style="border: solid 1px;border-radius: 5px;">'.self::link($link, $title).'</p>';
+            $real_link .= '<p style="border: solid 1px;border-radius: 5px;">' . self::link($link, $title) . '</p>';
         }
         return $real_link;
     }
 
     /**
      * @param array $contents
-     * ['title'=>['title'='uri','title'=>'uri']]
+     * ['Title1':['link_title':'link_1','Title2':...]]
+     * @param $panel_class
+     * default-success warning/danger/info/default
      * @return string
      */
-    static function dirLink($contents = array())
+    static function dirLink($contents = array(), $panel_class='success')
     {
         $toggle = "\"collapse\"";
         $parent = "\"#according\"";
-        $in_class = "\"panel-collapse collapse in\"";
+        $in_class = "\"panel-collapse collapse out\"";
         $panel_body = "\"panel-body\"";
-        $collapses = [1 => 'collapseOne', 2 => 'collapseTwo', 3 => 'collapseThree'];
+        $panel_line = "\"panel panel-{$panel_class}\"";
+        $collapses = [1 => 'collapseOne', 2 => 'collapseTwo', 3 => 'collapseThree',
+            4 => 'collapseFour', 5 => 'collapseFive', 6 => 'collapseSix', 7 => 'collapseSeven', 8 => 'collapseEight', 9 => 'CollapseNine', 10 => 'CollapseTen'];
         $begin_div = '<div class="panel-group" id="accordion">';
         $end_div = '</div>';
 
@@ -40,7 +44,7 @@ class voltFun
         $i = 1;
         foreach ($contents as $title => $links) {
             $real_link = self::rowLink($links);
-            $line_start .= '  <div class="panel panel-default">
+            $line_start .= "  <div class=$panel_line>" . '
         <div class="panel-heading">
                 <h4 class="panel-title">';
             $line_start .= "<a style='text-decoration: none' data-toggle=$toggle data-parent=$parent href=#$collapses[$i]>$title</a>" . '</h4>
