@@ -26,5 +26,12 @@ return new Phalcon\Config([
         ],
         'dir' => APP_ROOT . '/logs/',
         'file' => 'main.log'
-    ]
+    ],
+    'css'=>[
+        'bootstrap.min.css'
+    ],
+    'js' => [
+        'jquery.min.js',
+        'bootstrap.min.js'
+    ],
 ]);

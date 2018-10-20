@@ -32,7 +32,7 @@ function debug()
     $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
 
     $messages = func_get_args();
-    $print = clog($messages, Phalcon\Logger::DEBUG,"[{$file}=>{$real_traces['line']}]");
+    $print = clog($messages, Phalcon\Logger::DEBUG, "[{$file}=>{$real_traces['line']}]");
     echo $print . PHP_EOL;
 }
 
@@ -43,7 +43,7 @@ function info()
     $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
 
     $messages = func_get_args();
-    $print = clog($messages, Phalcon\Logger::INFO,"[{$file}=>{$real_traces['line']}]");
+    $print = clog($messages, Phalcon\Logger::INFO, "[{$file}=>{$real_traces['line']}]");
     echo $print . PHP_EOL;
 }
 
@@ -125,4 +125,11 @@ function get($uri, $params = array(), $headers = array())
 function isCli()
 {
     return php_sapi_name() == 'cli';
+}
+
+function getConfig($key)
+{
+    $di = \Phalcon\Di::getDefault();
+    $config = $di->get('config');
+    return $config->$key;
 }
