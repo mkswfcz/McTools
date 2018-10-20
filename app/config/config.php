@@ -34,4 +34,14 @@ return new Phalcon\Config([
         'jquery.min.js',
         'bootstrap.min.js'
     ],
+    'default_page'=>[
+        'admin' => [
+            'controller' => 'init',
+            'action' => 'index'
+        ],
+        'front'=>[
+            'controller' => 'init',
+            'action' => 'index'
+        ]
+    ]
 ]);
