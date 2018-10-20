@@ -16,4 +16,8 @@ $methods = $reflect->getMethods();
 //}
 
 $volt = new voltFun();
-echo $volt::dirLink(['title1'=>['u1'=>'#','u2'=>'#'],'title2'=>['x1'=>'#','x2'=>'#'],'title3'=>['z1'=>'#','z2'=>'#']]).PHP_EOL;
+//echo $volt::dirLink(['title1'=>['u1'=>'#','u2'=>'#'],'title2'=>['x1'=>'#','x2'=>'#'],'title3'=>['z1'=>'#','z2'=>'#']]).PHP_EOL;
+
+$path = APP_ROOT.'/public/css/admin/*.css';
+$files = glob($path);
+debug($files,$path);

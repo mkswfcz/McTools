@@ -25,18 +25,25 @@ class BaseController extends Controller
     #动态加载静态文件
     function setStaticFiles($namespace, $controller, $action, $file_type = 'css')
     {
+        $method = 'add' . ucwords($file_type);
+        $public_files = glob(APP_ROOT . '/public/' . $file_type);
+        foreach ($public_files as $public_file) {
+            $this->assets->$method($public_file);
+        }
         if (!$namespace) {
             return false;
         }
         $css_root = $file_type . '/' . $namespace . '/';
         $extension = '.' . $file_type;
+
         $css_files = [];
         $css_files[] = $css_root . $namespace . $extension;
         $css_files[] = $css_root . $controller . '/' . $controller . $extension;
         $css_files[] = $css_root . $controller . '/' . $action . $extension;
+
         foreach ($css_files as $file) {
             if (file_exists($file)) {
-                $this->assets->addCss($file);
+                $this->assets->$method($file);
             }
         }
     }
