@@ -20,10 +20,107 @@ use Phalcon\Mvc\Dispatcher;
 use Phalcon\Events\Event;
 use Phalcon\Mvc\Router;
 use Phalcon\Session\Adapter\Files as Session;
+use Phalcon\Di\FactoryDefault\Cli;
 
+if (php_sapi_name() != 'cli') {
+    $di = new FactoryDefault();
+    #循环调度控制转发volt,循环调度优先级
+    $di->set('dispatcher', function () {
+        $eventsManager = new Manager();
+        #bind 循环调度事件
+        $eventsManager->attach(
+            'dispatch:beforeDispatchLoop', function (Event $event, $dispatcher) {
+            $clazz = $dispatcher->getHandlerClass();
+            if (!class_exists($clazz)) {
+                $dispatcher->forward(['namespace' => '', 'controller' => 'Handler', 'action' => 'route404', 'params' => [$clazz]]);
+            }
+        });
 
-$di = new FactoryDefault();
+        $eventsManager->attach(
+            'dispatch:beforeExecuteRoute', function (Event $event, $dispatcher) {
+            $clazz = $dispatcher->getHandlerClass();
+            $handler = $this->getShared($clazz);
+            if (method_exists($handler, 'beforeAction')) {
+                $handler->beforeAction($dispatcher);
+                $handler->view->disable();
+            }
+        });
+        $eventsManager->attach('dispatch:afterDispatchLoop', function (Event $event, $dispatcher) {
+            $clazz = $dispatcher->getHandlerClass();
+            $handler = $this->getShared($clazz);
+            if (method_exists($handler, 'afterAction')) {
+                return $handler->afterAction($dispatcher);
+            }
+        });
+        $dispatcher = new Dispatcher();
+        $dispatcher->setEventsManager($eventsManager);
+        return $dispatcher;
+    });
 
+    $di->set('router', function () {
+        $router = new Router();
+        $uri = $router->getRewriteUri();
+        list($namespace, $controller, $action) = parseUri($uri);
+//    debug('uri: ', $uri, $namespace, $controller, $action);
+        if ($controller == 'favicon.ico') {
+            $uri = $uri . '/images';
+        }
+        $router->add(
+            $uri,
+            [
+                'namespace' => $namespace,
+                'controller' => $controller,
+                'action' => $action,
+            ]
+        );
+        return $router;
+    });
+
+    $di->set('view', function () {
+        $view = new View();
+        $view->setViewsDir(APP_ROOT . '/app/views/');
+        $view->setLayoutsDir('layouts/');
+        $view->registerEngines([
+            ".volt" => function ($view, $di) {
+                $volt = new  Volt($view, $di);
+                $volt->setOptions([
+                    'compiledPath' => function ($templatePath) {
+                        $dirName = dirname($templatePath);
+                        $file = str_replace($dirName . '/', '', $templatePath);
+                        $path = APP_ROOT . '/app/cache/volt/';
+                        if (!is_dir($path)) {
+                            mkdir($path, 0777, true);
+                        }
+                        $compiled_file = $path . str_replace('/', '_', $dirName) . $file . '.php';
+                        return $compiled_file;
+                    },
+                    'compileAlways' => false
+                ]);
+                $compiler = $volt->getCompiler();
+                $reflect = new ReflectionClass('voltFun');
+                $methods = $reflect->getMethods();
+                foreach ($methods as $method) {
+                    $name = $method->name;
+                    $compiler->addFunction($name, function ($args, $exprArgs) use ($name) {
+                        return '\voltFun::' . $name . '(' . $args . ')';
+                    });
+                }
+                return $volt;
+            }
+        ]);
+        $view->enable();
+        return $view;
+    });
+
+    $di->setShared('session', function () {
+        $session = new Session();
+        $session->start();
+        return $session;
+    });
+
+} else {
+    $di = new Cli();
+}
 
 $di->set('config', function () {
     $config = require APP_ROOT . "/app/config/config.php";
@@ -52,7 +149,7 @@ $di->set('db', function () {
     }
 });
 
-$di->set('logger', function (string $file = null, array $line = null) {
+$di->set('logger', function ($file = null, array $line = null) {
     $config = $this->get('config');
     $logger = $config->logger;
     $line = $logger->line;
@@ -74,99 +171,6 @@ $di->set('logger', function (string $file = null, array $line = null) {
     return $loggerAdapterFile;
 });
 
-#循环调度控制转发volt,循环调度优先级
-$di->set('dispatcher', function () {
-    $eventsManager = new Manager();
-    #bind 循环调度事件
-    $eventsManager->attach(
-        'dispatch:beforeDispatchLoop', function (Event $event, $dispatcher) {
-        $clazz = $dispatcher->getHandlerClass();
-        if (!class_exists($clazz)) {
-            $dispatcher->forward(['namespace' => '', 'controller' => 'Handler', 'action' => 'route404', 'params' => [$clazz]]);
-        }
-    });
-
-    $eventsManager->attach(
-        'dispatch:beforeExecuteRoute', function (Event $event, $dispatcher) {
-        $clazz = $dispatcher->getHandlerClass();
-        $handler = $this->getShared($clazz);
-        if (method_exists($handler, 'beforeAction')) {
-            $handler->beforeAction($dispatcher);
-            $handler->view->disable();
-        }
-    });
-    $eventsManager->attach('dispatch:afterDispatchLoop', function (Event $event, $dispatcher) {
-        $clazz = $dispatcher->getHandlerClass();
-        $handler = $this->getShared($clazz);
-        if (method_exists($handler, 'afterAction')) {
-            return $handler->afterAction($dispatcher);
-        }
-    });
-    $dispatcher = new Dispatcher();
-    $dispatcher->setEventsManager($eventsManager);
-    return $dispatcher;
-});
-
-$di->set('router', function () {
-    $router = new Router();
-    $uri = $router->getRewriteUri();
-    list($namespace, $controller, $action) = parseUri($uri);
-//    debug('uri: ', $uri, $namespace, $controller, $action);
-    if ($controller == 'favicon.ico') {
-        $uri = $uri . '/images';
-    }
-    $router->add(
-        $uri,
-        [
-            'namespace' => $namespace,
-            'controller' => $controller,
-            'action' => $action,
-        ]
-    );
-    return $router;
-});
-
-$di->set('view', function () {
-    $view = new View();
-    $view->setViewsDir(APP_ROOT . '/app/views/');
-    $view->setLayoutsDir('layouts/');
-    $view->registerEngines([
-        ".volt" => function ($view, $di) {
-            $volt = new  Volt($view, $di);
-            $volt->setOptions([
-                'compiledPath' => function ($templatePath) {
-                    $dirName = dirname($templatePath);
-                    $file = str_replace($dirName . '/', '', $templatePath);
-                    $path = APP_ROOT . '/app/cache/volt/';
-                    if (!is_dir($path)) {
-                        mkdir($path, 0777, true);
-                    }
-                    $compiled_file = $path . str_replace('/', '_', $dirName) . $file . '.php';
-                    return $compiled_file;
-                },
-                'compileAlways' => false
-            ]);
-            $compiler = $volt->getCompiler();
-            $reflect = new ReflectionClass('voltFun');
-            $methods = $reflect->getMethods();
-            foreach ($methods as $method) {
-                $name = $method->name;
-                $compiler->addFunction($name, function ($args, $exprArgs) use ($name) {
-                    return '\voltFun::' . $name . '(' . $args . ')';
-                });
-            }
-            return $volt;
-        }
-    ]);
-    $view->enable();
-    return $view;
-});
-
-$di->setShared('session', function () {
-    $session = new Session();
-    $session->start();
-    return $session;
-});
 
 #load config—files
 $dirs = $di->get('config')->get('dirs');

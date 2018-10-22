@@ -6,22 +6,13 @@
  * Time: 下午3:56
  */
 
+require_once __DIR__.'/public/index.php';
 use Phalcon\Di\FactoryDefault\Cli;
 use Phalcon\Cli\Console;
 
 define('VERSION', '1.0.0.0');
 $di = new Cli();
 
-$loader = new \Phalcon\Loader();
-$loader->registerDirs([
-    __DIR__ . '/app/tasks'
-])->register();
-
-$config_file = __DIR__ . '/app/config/config.php';
-if (file_exists($config_file)) {
-    $config = require __DIR__ . '/app/config/config.php';
-    $di->set('config', $config);
-}
 
 $console = new Phalcon\Cli\Console();
 $console->setDi($di);
