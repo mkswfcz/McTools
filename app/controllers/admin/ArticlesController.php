@@ -12,7 +12,7 @@ class ArticlesController extends \BaseController
 {
     function createAction()
     {
-        //$result = Articles::createArticles();
+        $result = \Articles::createArticles();
         echo 'create: article namespace' . PHP_EOL;
     }
 

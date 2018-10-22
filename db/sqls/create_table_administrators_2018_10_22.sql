@@ -1,6 +1,6 @@
-CREATE TABLE administrators(
+create table administrators(
     id serial PRIMARY KEY NOT NULL ,
-    name VARCHAR (255);
+    name VARCHAR (255),
     username VARCHAR (255),
     password VARCHAR (255),
     role VARCHAR (255),

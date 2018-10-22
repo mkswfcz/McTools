@@ -17,7 +17,6 @@ class Articles extends BaseModel
     {
         $libs = ['大', '小', '光', '树'];
         $article = new Articles();
-        $article->id = 2;
         $article->title = $libs[self::randIndex($libs)] . $libs[self::randIndex($libs)];
         $article->content = md5(date('Y-m-d H:i:s'));
         $result = $article->save();
