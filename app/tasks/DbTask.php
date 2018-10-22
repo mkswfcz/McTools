@@ -9,6 +9,12 @@
 class DbTask extends Phalcon\Cli\Task
 {
 
+    function isMysql()
+    {
+        $config = getConfig('database');
+        return $config->adapter == 'Mysql' ? true : false;
+    }
+
     function getDbName()
     {
         $app_name = getAppName();
@@ -16,42 +22,64 @@ class DbTask extends Phalcon\Cli\Task
         return $app_name;
     }
 
+    function getDatabase()
+    {
+        $database = getConfig('database');
+        return $database;
+    }
+
     function getBaseSql($db_name = '')
     {
         if (isNull($db_name)) {
             $db_name = $this->getDbName();
         }
-        $base_sql = 'psql -U postgres -d ' . $db_name . ' -c ';
+        $database = $this->getDatabase();
+        $base_sql = 'psql -U postgres -h ' . $database->host . ' -p ' . " {$database->port} -d " . $db_name . ' -c ';
+        if ($this->isMysql()) {
+            $base_sql = 'mysql -uroot -p -h' . $database->host . ' -P' . $database->port . ' -e ';
+        }
         return $base_sql;
     }
 
     function execute($sql, $db_name = '')
     {
-        debug('sql: ', $sql);
         $base_sql = $this->getBaseSql($db_name);
         $sql = $base_sql . '\'' . $sql . '\'';
+        debug('sql: ', $sql);
         return exec($sql);
     }
+
     #TODO 创建数据库
     function initAction()
     {
         $db_name = $this->getDbName();
-        $init_sql = "psql -U postgres -c 'create database {$db_name}'";
-        debug("create database {$db_name}!");
+        $database = getConfig('database');
+        if ($this->isMysql()) {
+            $sql = $this->getBaseSql();
+            $init_sql = $sql . '\'create database mc_tools \'';
+        } else {
+            $init_sql = "psql -U postgres -h 127.0.0.1 -p " . " {$database->port} " . "-c 'create database {$db_name}'";
+        }
+        debug("{$database->adapter}: create database {$db_name}!");
         system($init_sql);
     }
 
     function dropAction()
     {
-        $db_name = $this->getDbName();
-        echo "are you sure drop table {$db_name}?" . PHP_EOL;
+        $database = $this->getDatabase();
+        $dbname = $this->getDbName();
+        echo "are you sure drop table {$dbname}?" . PHP_EOL;
         $input = trim(fgetc(STDIN));
         if (strtolower($input) == 'y') {
-            $drop_sql = "psql -U postgres -c 'drop database {$db_name}'";
-            debug("drop database {$db_name}!");
+            if ($this->isMysql()) {
+                $drop_sql = $this->getBaseSql() . '\'drop database ' . $dbname . '\'';
+            } else {
+                $drop_sql = "psql -U postgres -c 'drop database {$dbname}'";
+            }
+            debug("{$database->adapter} drop database {$dbname}!");
             system($drop_sql);
         } else {
-            echo "cancel drop table {$db_name}!\n";
+            echo "cancel drop table {$dbname}!\n";
         }
     }
 
@@ -66,7 +94,7 @@ class DbTask extends Phalcon\Cli\Task
         if (!is_dir($sql_dir)) {
             mkdir($sql_dir);
         }
-        file_put_contents($sql_dir . '/' . $file_name .'_'.date('Y_m_d').'.sql', '', LOCK_EX);
+        file_put_contents($sql_dir . '/' . $file_name . '_' . date('Y_m_d') . '.sql', '', LOCK_EX);
     }
 
     function parseSqls($sql_str)
@@ -75,7 +103,7 @@ class DbTask extends Phalcon\Cli\Task
         $sqls = explode(';', $sql_str);
         $sql_handles = [];
         foreach ($sqls as $sql) {
-            if(!isNull($sql)) {
+            if (!isNull($sql)) {
                 $sql_handles[] = $sql;
             }
         }
@@ -101,11 +129,11 @@ class DbTask extends Phalcon\Cli\Task
         $manuals = [
             '初始化db' => $base . 'init',
             '删除db' => $base . 'drop',
-            '创建sql文件'=>$base.'sqlFile',
+            '创建sql文件' => $base . 'sqlFile',
             '执行sql' => $base . 'execSql'
         ];
         foreach ($manuals as $exec => $command) {
-            debug($exec.': ',$command);
+            debug($exec . ': ', $command);
         }
     }
 }
