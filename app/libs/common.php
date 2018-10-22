@@ -1,11 +1,25 @@
 <?php
 
+function isNumericArray($array)
+{
+    $keys = array_keys($array);
+    $length = count($array);
+    $check = range(0, $length - 1);
+    return $keys == $check;
+}
+
 function clog($content, $log_type, $location = '')
 {
     $log_text = '';
     if (is_array($content)) {
-        foreach ($content as $key => $value) {
-            $log_text .= json_encode($key) . '=>' . json_encode($value) . '  ';
+        if (!isNumericArray($content)) {
+            foreach ($content as $key => $value) {
+                $log_text .= is_string($value) ? $key . '=>' . $value . ' ' : json_encode($key) . '=>' . json_encode($value) . '  ';
+            }
+        } else {
+            foreach ($content as $value) {
+                $log_text .= is_string($value) ? $value : json_encode($value) . ' ';
+            }
         }
     } elseif (is_object($content)) {
         $log_text = json_encode($content);
@@ -132,4 +146,23 @@ function getConfig($key)
     $di = \Phalcon\Di::getDefault();
     $config = $di->get('config');
     return $config->$key;
+}
+
+function getAppName()
+{
+    $project_dir = realpath(__DIR__ . '/../../../');
+    return str_replace([$project_dir, '/'], '', APP_ROOT);
+}
+
+function camelize($uncamelize_word, $separator = '_')
+{
+    $uncamelize_word = str_replace($separator, ' ', $uncamelize_word);
+    $uncamelize_word = str_replace(' ', '', ucwords($uncamelize_word));
+    return ltrim($uncamelize_word);
+}
+
+function uncamelize($camelize_word, $separator = '_')
+{
+    $camelize_word = lcfirst($camelize_word);
+    return strtolower(preg_replace('/([a-z])([A-Z])/', '$1' . $separator . '$2', $camelize_word));
 }
