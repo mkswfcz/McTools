@@ -24,6 +24,7 @@ use Phalcon\Di\FactoryDefault\Cli;
 
 if (php_sapi_name() != 'cli') {
     $di = new FactoryDefault();
+    Phalcon\Di::setDefault($di);
     #循环调度控制转发volt,循环调度优先级
     $di->set('dispatcher', function () {
         $eventsManager = new Manager();
@@ -120,6 +121,7 @@ if (php_sapi_name() != 'cli') {
 
 } else {
     $di = new Cli();
+    Phalcon\Di::setDefault($di);
 }
 
 $di->set('config', function () {

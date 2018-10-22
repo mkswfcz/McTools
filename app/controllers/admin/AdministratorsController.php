@@ -8,7 +8,7 @@
  */
 
 namespace admin;
-class UsersController extends BaseController
+class AdministratorsController extends \BaseController
 {
     function registerAction()
     {
