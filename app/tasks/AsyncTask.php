@@ -92,7 +92,6 @@ class AsyncTask extends Phalcon\Cli\Task
         $current_pid = $this->monitor();
         debug("Main Process {$current_pid} start!");
         $async = getConfig('async');
-        debug($async);
         while (true) {
             $flag = false;
             $real_processes = array_count_values($this->task_maps);
