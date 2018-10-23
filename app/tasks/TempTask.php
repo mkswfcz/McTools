@@ -28,4 +28,13 @@ class TempTask extends Phalcon\Cli\Task
         $redis->unlock($lock);
         debug('unlock: ', $redis->sadd($lock, 1));
     }
+
+    function daemonAction()
+    {
+        daemon();
+        while (true) {
+            debug(date('Y-m-d H:i:s', time()));
+            sleep(1);
+        }
+    }
 }

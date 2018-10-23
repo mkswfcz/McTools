@@ -32,7 +32,8 @@ function clog($content, $log_type, $location = '')
     $logger = Phalcon\Di::getDefault()->get('logger');
     $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
     if (empty($location)) {
-        $location = "[{$file}=>{$real_traces['line']}]";
+        $pid = posix_getpid();
+        $location = "[PID {$pid} {$file}=>{$real_traces['line']}]";
     }
     $log = $location . $log_text;
     $logger->log($log_type, $log);
@@ -46,7 +47,7 @@ function debug()
     $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
 
     $messages = func_get_args();
-    $print = clog($messages, Phalcon\Logger::DEBUG, "[{$file}=>{$real_traces['line']}]");
+    $print = clog($messages, Phalcon\Logger::DEBUG);
     echo $print . PHP_EOL;
 }
 
@@ -57,7 +58,7 @@ function info()
     $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
 
     $messages = func_get_args();
-    $print = clog($messages, Phalcon\Logger::INFO, "[{$file}=>{$real_traces['line']}]");
+    $print = clog($messages, Phalcon\Logger::INFO);
     echo $print . PHP_EOL;
 }
 
@@ -165,4 +166,26 @@ function uncamelize($camelize_word, $separator = '_')
 {
     $camelize_word = lcfirst($camelize_word);
     return strtolower(preg_replace('/([a-z])([A-Z])/', '$1' . $separator . '$2', $camelize_word));
+}
+
+function daemon()
+{
+    $pid = pcntl_fork();
+    if (-1 == $pid) {
+        die("First Fork Error!");
+    } elseif ($pid) {
+        debug('daemon: 父进程(1):' . posix_getpid() . '退出!');
+        exit(0);
+    }
+    posix_setsid();
+    debug('daemon: 子进程(1):' . posix_getpid() . '脱离终端!');
+
+    $pid = pcntl_fork();
+    if (-1 == $pid) {
+        die('Second Fork Error!');
+    } elseif ($pid) {
+        debug('daemon: 父进程(2):' . posix_getpid() . '退出!');
+        exit(0);
+    }
+    debug('daemon: 守护进程',posix_getpid());
 }
