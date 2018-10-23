@@ -187,5 +187,11 @@ function daemon()
         debug('daemon: 父进程(2):' . posix_getpid() . '退出!');
         exit(0);
     }
-    debug('daemon: 守护进程',posix_getpid());
+    debug('daemon: 守护进程', posix_getpid());
+}
+
+function pidDisappear($pid)
+{
+    $result = ($pid <= 1 || @pcntl_getpriority($pid) === false);
+    return $result;
 }

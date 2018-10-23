@@ -48,5 +48,7 @@ return new Phalcon\Config([
             'controller' => 'init',
             'action' => 'index'
         ]
-    ]
+    ],
+    'async' => ['default' => 10],
+
 ]);
