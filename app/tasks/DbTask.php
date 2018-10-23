@@ -41,12 +41,24 @@ class DbTask extends Phalcon\Cli\Task
         return $base_sql;
     }
 
+    #兼容mysql Psql
     function execute($sql, $db_name = '')
     {
+        $di = Phalcon\Di::getDefault();
+        $db = $di->get('db');
+        $result = false;
+        try {
+            $result = $db->execute($sql);
+            if (!$result) {
+                debug('Exception: sql: ' . $sql);
+            }
+        } catch (Exception $e) {
+            debug($e->getMessage());
+        }
         $base_sql = $this->getBaseSql($db_name);
         $sql = $base_sql . '\'' . $sql . '\'';
         debug('sql: ', $sql);
-        return exec($sql);
+        return $result;
     }
 
     #TODO 创建数据库
