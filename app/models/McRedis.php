@@ -32,4 +32,31 @@ class McRedis
         }
         return self::$_map[$endpoint];
     }
+
+    function __call($name, $arguments)
+    {
+        #... 将数组和可遍历对象展开为函数参数
+        return call_user_func([$this->_cache,$name ], ...$arguments);
+    }
+
+    function lock($source, $ttl = 10)
+    {
+        $lock = 'cache_lock_' . $source;
+        while (true) {
+            $result = $this->set($lock, time() + $ttl, ['nx', 'ex' => $ttl]);
+            if (!$result) {
+                usleep(10);
+            } else {
+                break;
+            }
+        }
+        return $lock;
+    }
+
+    function unlock($lock)
+    {
+        $this->del($lock);
+    }
+
+
 }

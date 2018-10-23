@@ -27,19 +27,24 @@ return new Phalcon\Config([
         'dir' => APP_ROOT . '/logs/',
         'file' => 'main.log'
     ],
-    'css'=>[
+    'cache' => [
+        'redis' => [
+            'endpoint' => '127.0.0.1:6379'
+        ]
+    ],
+    'css' => [
         'bootstrap.min.css'
     ],
     'js' => [
         'jquery.min.js',
         'bootstrap.min.js'
     ],
-    'default_page'=>[
+    'default_page' => [
         'admin' => [
             'controller' => 'init',
             'action' => 'index'
         ],
-        'front'=>[
+        'front' => [
             'controller' => 'init',
             'action' => 'index'
         ]

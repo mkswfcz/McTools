@@ -32,6 +32,12 @@ class BaseModel extends Model
         return $attributes;
     }
 
+    static function getRedis()
+    {
+        $redis = getConfig('cache')->redis;
+        return McRedis::getInstance($redis->endpoint);
+    }
+
     static function findLast($conditions = array())
     {
         if (empty($conditions)) {
