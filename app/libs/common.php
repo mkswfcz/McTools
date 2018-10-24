@@ -47,7 +47,9 @@ function debug()
     $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
 
     $messages = func_get_args();
-    $print = clog($messages, Phalcon\Logger::DEBUG);
+    $pid = posix_getpid();
+    $location = "[PID {$pid} {$file}=>{$real_traces['line']}]";
+    $print = clog($messages, Phalcon\Logger::DEBUG, $location);
     echo $print . PHP_EOL;
 }
 

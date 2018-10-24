@@ -10,6 +10,17 @@ class AsyncTask extends Phalcon\Cli\Task
 {
     private $task_maps = array();
 
+    function getTaskListKey()
+    {
+        return 'async_task_list_key';
+    }
+
+    function manageExecuteKey()
+    {
+        return 'manage_execute_task_process_ids';
+    }
+
+
     function getRedis()
     {
         $endpoint = getConfig('cache')->redis->endpoint;
@@ -18,12 +29,50 @@ class AsyncTask extends Phalcon\Cli\Task
 
     function manage()
     {
-        debug('execute manage...');
+        $redis = $this->getRedis();
+        $pids = $redis->zrange($this->manageExecuteKey(), 0, 9, true);
+        foreach ($pids as $pid => $score) {
+            $time = time() - $score;
+            if ($time > 8) {
+                debug("Task 用时: {$time},进程{$pid} 退出!");
+                $redis->zrem($this->manageExecuteKey(), $pid);
+                posix_kill($pid, SIGKILL);
+            }
+        }
+
     }
 
     function popAndExecute()
     {
-        debug('Pop and Exec!');
+        try {
+            $redis = $this->getRedis();
+            $list_key = $this->getTaskListKey();
+
+            $task_id = $redis->zrange($list_key, 0, 0);
+            if (!empty($task_id)) {
+                $task = $redis->get(current($task_id));
+                $task = json_decode($task, true);
+                debug('Pop: ', $task_id, $task);
+                $redis->zrem($list_key, $task_id);
+                $redis->del($task_id);
+                if (!empty($task) && is_array($task)) {
+
+                    $manage_key = $this->manageExecuteKey();
+                    $pid = posix_getpid();
+                    $redis->zadd($manage_key, time(), $pid);
+                    $method = $task['class'] . '::' . $task['method'];
+                    $arguments = $task['arguments'];
+                    call_user_func($method, ...$arguments);
+                    $redis->zrem($manage_key, $pid);
+                }
+            } else {
+                debug('task null!');
+                sleep(3);
+            }
+
+        } catch (Exception $e) {
+            debug($e->getMessage());
+        }
     }
 
     function doTask()
@@ -129,5 +178,36 @@ class AsyncTask extends Phalcon\Cli\Task
         if ($result) {
             debug("Main Process {$pid} Exit!");
         }
+    }
+
+    function clearTask()
+    {
+        $redis = $this->getRedis();
+        $keys = $redis->zrange($this->getTaskListKey(), 0, -1);
+        foreach ($keys as $key) {
+            $redis->del($key);
+        }
+        $redis->del($this->getTaskListKey());
+    }
+
+    function testAction()
+    {
+        $this->clearTask();
+        $redis = $this->getRedis();
+        $task = ['class' => 'Articles', 'method' => 'f', 'arguments' => ['a', 'b']];
+        $task_id = 'task_id_' . uniqid('mc');
+        $redis->zadd($this->getTaskListKey(), time(), $task_id);
+        $task_str = json_encode($task);
+        var_dump($task_str);
+        var_dump($task_id);
+        $result = $redis->set($task_id, $task_str, 1);
+        debug($task_id, $task, $result,'get: ',$redis->get($task_id));
+    }
+
+    function execAction()
+    {
+//        $this->popAndExecute();
+        $redis = $this->getRedis();
+        debug($redis->get('task_id_mc5bd0275b23292'));
     }
 }

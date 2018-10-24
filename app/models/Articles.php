@@ -8,9 +8,9 @@
  */
 class Articles extends BaseModel
 {
-    static function randIndex($arrays=array())
+    static function randIndex($arrays = array())
     {
-        return mt_rand(0,count($arrays)-1);
+        return mt_rand(0, count($arrays) - 1);
     }
 
     static function createArticles()
@@ -21,5 +21,14 @@ class Articles extends BaseModel
         $article->content = md5(date('Y-m-d H:i:s'));
         $result = $article->save();
         return $result;
+    }
+
+    static function f()
+    {
+        while (true) {
+            sleep(1);
+            $article = Articles::findLast();
+            debug('f: ', func_get_args(),$article);
+        }
     }
 }
