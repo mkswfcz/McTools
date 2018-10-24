@@ -51,30 +51,45 @@ class AsyncTask extends Phalcon\Cli\Task
 
     }
 
-    function popAndExecute()
+    function popQueue()
+    {
+        $ticks = [];
+        $redis = $this->getRedis();
+        $list_key = $this->getTaskListKey();
+        $result = $redis->zrange($list_key, 0, 0);
+        if (!empty($result)) {
+            $task_id = current($result);
+            $redis->zrem($list_key, $task_id);
+            #事务原子性
+            $redis->multi();
+            $redis->get($task_id);
+            $redis->del($task_id);
+            $result = $redis->exec();
+            $task = $result[0];
+            if (!empty($task)) {
+                $ticks['id'] = $task_id;
+                $ticks['task'] = json_decode($task, true);
+                return $ticks;
+            }
+        }
+        return false;
+    }
+
+    function execute()
     {
         try {
             $redis = $this->getRedis();
-            $list_key = $this->getTaskListKey();
-
-            $result = $redis->zrange($list_key, 0, 0);
-            if (!empty($result)) {
-                $task_id = current($result);
-                $redis->zrem($list_key, $task_id);
-                $task = $redis->get($task_id);
-                $task = json_decode($task, true);
-                debug('Pop: ', $task_id, $task);
-                $redis->del($task_id);
-                if (!empty($task) && is_array($task)) {
-
-                    $manage_key = $this->manageExecuteKey();
-                    $pid = posix_getpid();
-                    $redis->zadd($manage_key, time(), $pid);
-                    $method = $task['class'] . '::' . $task['method'];
-                    $arguments = $task['arguments'];
-                    call_user_func($method, ...$arguments);
-                    $redis->zrem($manage_key, $pid);
-                }
+            $executes = $this->popQueue();
+            if ($executes) {
+                debug('execute: ', $executes['id'], $executes['task']);
+                $task = $executes['task'];
+                $manage_key = $this->manageExecuteKey();
+                $pid = posix_getpid();
+                $redis->zadd($manage_key, time(), $pid);
+                $method = $task['class'] . '::' . $task['method'];
+                $arguments = $task['arguments'];
+                call_user_func($method, ...$arguments);
+                $redis->zrem($manage_key, $pid);
             } else {
                 sleep(1);
                 debug('task null!');
@@ -90,7 +105,7 @@ class AsyncTask extends Phalcon\Cli\Task
             if (pidDisappear(posix_getppid())) {
                 break;
             } else {
-                $this->popAndExecute();
+                $this->execute();
             }
         }
     }
