@@ -46,4 +46,24 @@ class BaseModel extends Model
         }
         return self::find($conditions);
     }
+
+    /**
+     * @param $method
+     * @param array $arguments
+     * 添加到异步队列
+     */
+    static function push($method, $arguments = array())
+    {
+        $class = get_called_class();
+        $redis = self::getRedis();
+        $task_id = 'task_id_' . uniqid('mc');
+        $task['class'] = $class;
+        $task['method'] = $method;
+        $task['arguments'] = $arguments;
+        $result = $redis->set($task_id, json_encode($task));
+        if ($result) {
+            $redis->zadd('async_task_list_key', time(), $task_id);
+            debug('async_push:', $task_id, $task);
+        }
+    }
 }

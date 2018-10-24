@@ -25,10 +25,7 @@ class Articles extends BaseModel
 
     static function f()
     {
-        while (true) {
-            sleep(1);
-            $article = Articles::findLast();
-            debug('f: ', func_get_args(),$article);
-        }
+        $article = Articles::findLast();
+        debug('f: ', func_get_args(), $article);
     }
 }

@@ -198,3 +198,11 @@ function pidDisappear($pid)
     $result = ($pid <= 1 || @pcntl_getpriority($pid) === false);
     return $result;
 }
+
+function timestamp()
+{
+    $micro_sec = floatval(microtime());
+    $sec = floor($micro_sec / 10);
+    $date = date('Y-m-d H:i:s');
+    return [$date, $micro_sec];
+}

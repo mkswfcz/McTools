@@ -37,4 +37,12 @@ class TempTask extends Phalcon\Cli\Task
             sleep(1);
         }
     }
+
+    function pushAction()
+    {
+        while (true) {
+//            sleep(1);
+            Articles::push('f',date('Y-m-d H:i:s'));
+        }
+    }
 }

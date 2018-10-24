@@ -81,15 +81,21 @@ class AsyncTask extends Phalcon\Cli\Task
             $redis = $this->getRedis();
             $executes = $this->popQueue();
             if ($executes) {
-                debug('execute: ', $executes['id'], $executes['task']);
+                list($date, $micro_begin) = timestamp();
+                debug('async_execute: ', 'start: ', $date . '-' . $micro_begin, $executes['id'], $executes['task']);
                 $task = $executes['task'];
                 $manage_key = $this->manageExecuteKey();
                 $pid = posix_getpid();
                 $redis->zadd($manage_key, time(), $pid);
                 $method = $task['class'] . '::' . $task['method'];
                 $arguments = $task['arguments'];
+                if (!is_array($arguments)) {
+                    $arguments = [$arguments];
+                }
                 call_user_func($method, ...$arguments);
                 $redis->zrem($manage_key, $pid);
+                list($date, $micro_end) = timestamp();
+                debug('async_end: ', $date . '-' . $micro_end);
             } else {
                 sleep(1);
                 debug('task null!');
@@ -207,10 +213,12 @@ class AsyncTask extends Phalcon\Cli\Task
         $pid_dir = $this->getPidDir();
         $pid_file = $pid_dir . '/monitor.pid';
         $pid = file_get_contents($pid_file);
-        $result = posix_kill($pid, SIGKILL);
-        if ($result) {
-            file_put_contents($pid_file, '');
-            debug("Main Process {$pid} Exit!");
+        if ($pid) {
+            $result = posix_kill($pid, SIGKILL);
+            if ($result) {
+                file_put_contents($pid_file, '');
+                debug("Main Process {$pid} Exit!");
+            }
         }
     }
 
@@ -222,20 +230,5 @@ class AsyncTask extends Phalcon\Cli\Task
             $redis->del($key);
         }
         $redis->del($this->getTaskListKey());
-    }
-
-    function testAction()
-    {
-        $this->clearTask();
-        $redis = $this->getRedis();
-        $task = ['class' => 'Articles', 'method' => 'f', 'arguments' => ['a', 'b']];
-        $task_id = 'task_id_' . uniqid('mc');
-
-        $task_str = json_encode($task);
-        $result = $redis->set($task_id, $task_str);
-        if ($result) {
-            $add_result = $redis->zadd($this->getTaskListKey(), time(), $task_id);
-            debug($task_id, $task, $add_result, $result, 'get: ', $redis->get($task_id));
-        }
     }
 }
