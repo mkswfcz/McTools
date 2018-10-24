@@ -42,7 +42,13 @@ class TempTask extends Phalcon\Cli\Task
     {
         while (true) {
 //            sleep(1);
-            Articles::push('f',date('Y-m-d H:i:s'));
+            Articles::push('f', date('Y-m-d H:i:s'));
         }
+    }
+
+    function curlAction()
+    {
+        $result = curlGet('https://segmentfault.com/q/1010000008890209');
+        debug('result: ',$result);
     }
 }
