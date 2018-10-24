@@ -18,7 +18,7 @@ function clog($content, $log_type, $location = '')
             }
         } else {
             foreach ($content as $value) {
-                $log_text .= is_string($value) ? ' '.$value.' ' : json_encode($value) . ' ';
+                $log_text .= is_string($value) ? ' ' . $value . ' ' : json_encode($value) . ' ';
             }
         }
     } elseif (is_object($content)) {
@@ -48,7 +48,8 @@ function debug()
 
     $messages = func_get_args();
     $pid = posix_getpid();
-    $location = "[PID {$pid} {$file}=>{$real_traces['line']}]";
+    $time = date('Y-m-d H:i:s', time());
+    $location = "[{$time}][PID {$pid} {$file}=>{$real_traces['line']}]";
     $print = clog($messages, Phalcon\Logger::DEBUG, $location);
     echo $print . PHP_EOL;
 }

@@ -55,14 +55,12 @@ class AsyncTask extends Phalcon\Cli\Task
     {
         try {
             $redis = $this->getRedis();
-            $lock = $redis->lock('pop_execute_async_task');
             $list_key = $this->getTaskListKey();
 
             $result = $redis->zrange($list_key, 0, 0);
             if (!empty($result)) {
                 $task_id = current($result);
-                $zrem_result = $redis->zrem($list_key, $task_id);
-                debug('zrem: ', $zrem_result, $list_key, $task_id);
+                $redis->zrem($list_key, $task_id);
                 $task = $redis->get($task_id);
                 $task = json_decode($task, true);
                 debug('Pop: ', $task_id, $task);
@@ -77,12 +75,10 @@ class AsyncTask extends Phalcon\Cli\Task
                     call_user_func($method, ...$arguments);
                     $redis->zrem($manage_key, $pid);
                 }
-                $redis->unlock($lock);
             } else {
-                debug(date('Y-m-d H:i:s'),'task null!');
                 sleep(1);
+                debug('task null!');
             }
-
         } catch (Exception $e) {
             debug($e->getMessage());
         }
@@ -135,7 +131,6 @@ class AsyncTask extends Phalcon\Cli\Task
         $pid = posix_getpid();
         debug("Monitor Process: {$pid} Start!");
         while (true) {
-            sleep(2);
             $this->manage();
             if (pidDisappear(posix_getppid())) {
                 break;
@@ -199,7 +194,7 @@ class AsyncTask extends Phalcon\Cli\Task
         $pid = file_get_contents($pid_file);
         $result = posix_kill($pid, SIGKILL);
         if ($result) {
-            file_put_contents($pid_file,'');
+            file_put_contents($pid_file, '');
             debug("Main Process {$pid} Exit!");
         }
     }
@@ -227,12 +222,5 @@ class AsyncTask extends Phalcon\Cli\Task
             $add_result = $redis->zadd($this->getTaskListKey(), time(), $task_id);
             debug($task_id, $task, $add_result, $result, 'get: ', $redis->get($task_id));
         }
-    }
-
-    function execAction()
-    {
-//        $this->popAndExecute();
-        $redis = $this->getRedis();
-        debug($redis->get('task_id_mc5bd028db62d43'));
     }
 }
