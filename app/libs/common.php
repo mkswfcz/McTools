@@ -18,7 +18,7 @@ function clog($content, $log_type, $location = '')
             }
         } else {
             foreach ($content as $value) {
-                $log_text .= is_string($value) ? $value : json_encode($value) . ' ';
+                $log_text .= is_string($value) ? ' '.$value.' ' : json_encode($value) . ' ';
             }
         }
     } elseif (is_object($content)) {
