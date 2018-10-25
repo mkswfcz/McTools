@@ -50,12 +50,18 @@ class BaseController extends Controller
         $static_files[] = $static_root . $namespace . $extension;
         $static_files[] = $static_root . $controller . '/' . $controller . $extension;
         $static_files[] = $static_root . $controller . '/' . $action . $extension;
-
+        debug($static_files);
         foreach ($static_files as $file) {
             if (file_exists($file)) {
                 $this->assets->$method($file);
             }
         }
+    }
+
+    function getSecondFiles()
+    {
+        $files = glob(APP_ROOT.'/public/css');
+        debug($files);
     }
 
     function beforeExecuteRoute($dispatcher)
@@ -132,12 +138,14 @@ class BaseController extends Controller
         $this->view->enable();
         if (!empty($namespace)) {
             $pick_view = $namespace . '/' . $controller . '/' . $action;
-            if (file_exists(APP_ROOT.'/app/views/layouts/'.$namespace.'.volt')) {
+            if (file_exists(APP_ROOT . '/app/views/layouts/' . $namespace . '.volt')) {
                 $this->view->setTemplateAfter($namespace);
             }
+            debug('pick: ', $pick_view);
             $this->view->pick($pick_view);
         } else {
             $pick_view = $controller . '/' . $action;
+            debug('pick: ', $pick_view);
             $this->view->pick($pick_view);
         }
     }

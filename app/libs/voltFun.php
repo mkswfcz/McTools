@@ -2,9 +2,15 @@
 
 class voltFun
 {
-    static function form()
+    static function input($elements)
     {
-
+        $input = '';
+        foreach ($elements as $element => $value) {
+            $input .= " {$element}='{$value}' ";
+        }
+        $input = "<input {$input}><br>";
+//        debug('input: ',$input);
+        return $input;
     }
 
     static function link($uri, $title)
@@ -28,7 +34,7 @@ class voltFun
      * default-success warning/danger/info/default
      * @return string
      */
-    static function dirLink($contents = array(), $panel_class='success')
+    static function dirLink($contents = array(), $panel_class = 'success')
     {
         $toggle = "\"collapse\"";
         $parent = "\"#according\"";

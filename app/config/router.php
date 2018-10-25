@@ -46,7 +46,7 @@ function parseUri($uri)
     $count = count($uri_parts);
     $default_page = getConfig('default_page');
     if ($count === 0) {
-        return ['front',$default_page->front->controller,$default_page->front->action];
+        return ['front', $default_page->front->controller, $default_page->front->action];
     }
     switch ($count) {
         case 1:
@@ -73,6 +73,9 @@ function parseUri($uri)
     $namespace = getValue($space_key, $uri_parts, '');
     $controller = getValue($controller_key, $uri_parts, '');
     $action = getValue($action_key, $uri_parts, '');
+    if ($action_key == 'index') {
+        $action = 'index';
+    }
     if (empty($namespace)) {
         $namespace = 'front';
         if ($controller == 'admin') {

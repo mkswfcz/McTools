@@ -10,7 +10,7 @@
 namespace admin;
 class AdministratorsController extends \BaseController
 {
-    function registerAction()
+    function indexAction()
     {
 
     }
