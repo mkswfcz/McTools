@@ -210,6 +210,7 @@ function curlPost($url)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch,CURLOPT_TIMEOUT,10);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -222,9 +223,53 @@ function curlGet($url)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch,CURLOPT_TIMEOUT,10);
     curl_setopt($ch, CURLOPT_HTTPGET, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $result = curl_exec($ch);
     curl_close($ch);
     return $result;
+}
+
+function checkIdCard($id_card)
+{
+    $id_card = strtoupper($id_card);
+    $reg = "/(^\d{15}$)|(^\d{17}([0-9]|X)$)/";
+    if (!preg_match($reg, $id_card)) {
+        return false;
+    }
+    #15:/6-address/2-96/2-月/2-日/3-顺序号
+    if (15 == strlen($id_card)) {
+        $reg = "/^(\d{6})+(\d{2})+(\d{2})+(\d{2})+(\d{3})$/";
+        @preg_match($reg, $id_card, $splits);
+        $birth = '19' . $splits[2] . '/' . $splits[3] . '/' . $splits[4];
+        if (!strtotime($birth)) {
+            return false;
+        } else {
+            return true;
+        }
+    } elseif (18 == strlen($id_card)) {
+        $reg = "/^(\d{6})+(\d{4})+(\d{2})+(\d{2})+(\d{3})([0-9]|X)$/";
+        @preg_match($reg, $id_card, $splits);
+        $birth = $splits[2] . '/' . $splits[3] . '/' . $splits[4];
+        if (!strtotime($birth)) {
+            return false;
+        } else {
+            #验证校验位
+            $arr_int = array(7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2);
+            $arr_ch = array('1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2');
+            $sign = 0;
+            for ($i = 0; $i < 17; $i++) {
+                $b = (int)$id_card[$i];
+                $w = $arr_int[$i];
+                $sign += $b * $w;
+            }
+            $n = $sign % 11;
+            $check_number = $arr_ch[$n];
+            if ($check_number === substr($id_card, 17, 1)) {
+                return true;
+            }
+        }
+    }
+    return false;
 }

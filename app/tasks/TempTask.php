@@ -48,7 +48,6 @@ class TempTask extends Phalcon\Cli\Task
 
     function curlAction()
     {
-        $result = curlGet('https://segmentfault.com/q/1010000008890209');
-        debug('result: ',$result);
+        $result = curlGet('http://ex.haobtc.io/test/user_agent');
     }
 }
