@@ -32,8 +32,8 @@ class BaseController extends Controller
                 $static_path = $static_type . '/' . $file;
                 $this->assets->$method($static_path);
             }
-
         }
+        $this->assets->collection('footer')->addJs('js/mc.js');
     }
 
     #动态加载静态文件

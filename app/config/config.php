@@ -37,7 +37,8 @@ return new Phalcon\Config([
     ],
     'js' => [
         'jquery.min.js',
-        'bootstrap.min.js'
+        'bootstrap.min.js',
+        'vue.min.js'
     ],
     'default_page' => [
         'admin' => [

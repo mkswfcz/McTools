@@ -8,14 +8,21 @@
     {{ this.assets.outputJs() }}
     {{ this.assets.outputCss() }}
 </head>
-<style type="text/css">
 
-</style>
 <body>
 <div class="card">
     {{ dirLink(['AMark':['Login':'#','Register':'#'],'Test':['v1':'hello','v2':'world'],'Docs':['doc1':'#','doc2':'#'],'Docs1':['doc1':'#','doc2':'#'],'Docs2':['doc1':'#','doc2':'#'],'Docs3':['doc1':'#','doc2':'#'],
         'Docs4':['doc1':'#','doc2':'#'],'Docs5':['doc1':'#','doc2':'#'],'Docs6':['doc1':'#','doc2':'#']]) }}
+</div>
+
+<div class="mc_admin_content">
+    <div id="app">
+        <p> ${message}</p>
+    </div>
+    {{ content() }}
 
 </div>
-{{ content() }}
+{{ this.assets.outputJs('footer') }}
 </body>
+
+</html>
