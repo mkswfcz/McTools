@@ -125,8 +125,11 @@ class BaseController extends Controller
         return $acl;
     }
 
-    function request($key, $default = null)
+    function request($key='', $default = null)
     {
+        if(empty($key)){
+            return $_REQUEST;
+        }
         if (isset($_REQUEST[$key])) {
             return $_REQUEST[$key];
         } else {

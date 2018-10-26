@@ -40,6 +40,11 @@ function clog($content, $log_type, $location = '')
     return $log;
 }
 
+function printLog($log)
+{
+    echo $log . PHP_EOL;
+}
+
 function debug()
 {
     $traces = debug_backtrace();
@@ -51,7 +56,9 @@ function debug()
     $time = date('Y-m-d H:i:s', time());
     $location = "[{$time}][PID {$pid} {$file}=>{$real_traces['line']}]";
     $print = clog($messages, Phalcon\Logger::DEBUG, $location);
-    echo $print . PHP_EOL;
+    if (php_sapi_name() == 'cli') {
+        printLog($print);
+    }
 }
 
 function info()
@@ -61,8 +68,13 @@ function info()
     $file = str_replace(APP_ROOT . '/', '', $real_traces['file']);
 
     $messages = func_get_args();
-    $print = clog($messages, Phalcon\Logger::INFO);
-    echo $print . PHP_EOL;
+    $pid = posix_getpid();
+    $time = date('Y-m-d H:i:s', time());
+    $location = "[{$time}][PID {$pid} {$file}=>{$real_traces['line']}]";
+    $print = clog($messages, Phalcon\Logger::INFO, $location);
+    if (php_sapi_name() == 'cli') {
+        printLog($print);
+    }
 }
 
 function isNull($var)
@@ -210,7 +222,7 @@ function curlPost($url)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch,CURLOPT_TIMEOUT,10);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     curl_setopt($ch, CURLOPT_POST, true);
     curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -223,7 +235,7 @@ function curlGet($url)
 {
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch,CURLOPT_TIMEOUT,10);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 10);
     curl_setopt($ch, CURLOPT_HTTPGET, true);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     $result = curl_exec($ch);
