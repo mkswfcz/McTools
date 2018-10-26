@@ -11,7 +11,7 @@
 
 <body>
 <div class="card">
-    {{ dirLink(['AMark':['Login':'/admin/adminitrators','Apply':'#'],'Test':['v1':'hello','v2':'world'],'Docs':['doc1':'#','doc2':'#'],'Docs1':['doc1':'#','doc2':'#'],'Docs2':['doc1':'#','doc2':'#'],'Docs3':['doc1':'#','doc2':'#'],
+    {{ dirLink(['AMark':['Login':'/admin/administrators','Apply':'#'],'Test':['v1':'hello','v2':'world'],'Docs':['doc1':'#','doc2':'#'],'Docs1':['doc1':'#','doc2':'#'],'Docs2':['doc1':'#','doc2':'#'],'Docs3':['doc1':'#','doc2':'#'],
         'Docs4':['doc1':'#','doc2':'#'],'Docs5':['doc1':'#','doc2':'#'],'Docs6':['doc1':'#','doc2':'#']]) }}
 </div>
 
