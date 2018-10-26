@@ -14,4 +14,10 @@ class AdministratorsController extends \BaseController
     {
 
     }
+
+    function loginAction()
+    {
+        $params = $this->request();
+        debug($params);
+    }
 }

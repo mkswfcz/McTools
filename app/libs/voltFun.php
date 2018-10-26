@@ -2,14 +2,35 @@
 
 class voltFun
 {
+    static function form($elements)
+    {
+        $form = '';
+        foreach ($elements as $element => $value) {
+            if ($element == 'style') {
+                foreach ($value as $k => $v) {
+                    $form .= "style={$k}:{$v};";
+                }
+            } else {
+                $form .= " {$element}='{$value}' ";
+            }
+        }
+        $form = "<form {$form}>";
+        return $form;
+    }
+
     static function input($elements)
     {
         $input = '';
         foreach ($elements as $element => $value) {
-            $input .= " {$element}='{$value}' ";
+            if ($element == 'style') {
+                foreach ($value as $k => $v) {
+                    $input .= "style={$k}:{$v};";
+                }
+            } else {
+                $input .= " {$element}='{$value}' ";
+            }
         }
         $input = "<input {$input}><br>";
-//        debug('input: ',$input);
         return $input;
     }
 
