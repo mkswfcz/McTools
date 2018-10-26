@@ -22,6 +22,19 @@ class BaseController extends Controller
         return [$namespace, $controller, $action];
     }
 
+    function loadRemoteSource()
+    {
+        $remote_static = getConfig('remote_static');
+        foreach ($remote_static as $type => $uris) {
+            if (!isNull($uris)) {
+                $method = 'add' . strtoupper($type);
+                foreach ($uris as $uri) {
+                    $this->assets->$method('//'.$uri);
+                }
+            }
+        }
+    }
+
     function loadPublicStatic()
     {
         $static_types = ['css', 'js'];
@@ -31,7 +44,7 @@ class BaseController extends Controller
             foreach (getConfig($static_type) as $file) {
                 $static_path = $static_type . '/' . $file;
                 $this->assets->$method($static_path);
-                debug('load static public: ',$static_path);
+                debug('load static public: ', $static_path);
             }
         }
         $this->assets->collection('footer')->addJs('js/mc.js');
@@ -51,20 +64,20 @@ class BaseController extends Controller
         $static_files[] = $static_root . $namespace . $extension;
         $static_files[] = $static_root . $controller . '/' . $controller . $extension;
         $static_files[] = $static_root . $controller . '/' . $action . $extension;
-        $controller_static_dir = realpath(APP_ROOT.'/public/'.$file_type.'/'.$namespace.'/'.$controller);
-        if(is_dir($controller_static_dir)){
-            $files = glob($controller_static_dir.'/*.'.$file_type);
-            foreach($files as $item){
-                $item = str_replace(APP_ROOT.'/public/','',$item);
+        $controller_static_dir = realpath(APP_ROOT . '/public/' . $file_type . '/' . $namespace . '/' . $controller);
+        if (is_dir($controller_static_dir)) {
+            $files = glob($controller_static_dir . '/*.' . $file_type);
+            foreach ($files as $item) {
+                $item = str_replace(APP_ROOT . '/public/', '', $item);
                 $this->assets->$method($item);
-                debug('load static: ',$item);
+                debug('load static: ', $item);
             }
         }
 
         foreach ($static_files as $file) {
             if (file_exists($file)) {
                 $this->assets->$method($file);
-                debug('load static: ',$file);
+                debug('load static: ', $file);
             }
         }
     }
@@ -81,6 +94,7 @@ class BaseController extends Controller
             return $this->respJson(0, 'access not allowed', ['role' => $role]);
         }
         #顺序
+        $this->loadRemoteSource();
         $this->loadPublicStatic();
         $this->setStaticFiles($namespace, $controller, $action);
         $this->setStaticFiles($namespace, $controller, $action, 'js');
@@ -125,9 +139,9 @@ class BaseController extends Controller
         return $acl;
     }
 
-    function request($key='', $default = null)
+    function request($key = '', $default = null)
     {
-        if(empty($key)){
+        if (empty($key)) {
             return $_REQUEST;
         }
         if (isset($_REQUEST[$key])) {

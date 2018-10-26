@@ -16,7 +16,7 @@
     border-radius: 5px 5px 0 0;
 }
 
-#admin_input {
+.admin_input {
     outline: none;
     width: 200px;
     height: 25%;

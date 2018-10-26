@@ -32,6 +32,14 @@ return new Phalcon\Config([
             'endpoint' => '127.0.0.1:6379'
         ]
     ],
+    'remote_static' => [
+        'js' =>
+            [
+                'crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/aes.js',
+                'crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/md5.js',
+                'crypto-js.googlecode.com/svn/tags/3.0.2/build/components/pad-zeropadding.js'
+            ]
+    ],
     'css' => [
         'bootstrap.min.css'
     ],

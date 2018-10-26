@@ -19,5 +19,6 @@ class AdministratorsController extends \BaseController
     {
         $params = $this->request();
         debug('login: ',$params);
+        return $this->respJson(0,'',$params);
     }
 }
