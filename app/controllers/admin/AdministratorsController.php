@@ -18,8 +18,15 @@ class AdministratorsController extends \BaseController
     function loginAction()
     {
         $result = [];
-        $result['username'] = $this->request('username');
-        $result['password'] = $this->request('password');
-        return $this->respJson(0,'',$result);
+        $user_name = $this->request('username');
+        $password = $this->request('password');
+        $result['username'] = $user_name;
+        $result['password'] = $password;
+        $result['role'] = 'admin';
+        if (\Administrators::register($user_name, $password, 'admin')) {
+            return $this->respJson(0, '创建成功', $result);
+        } else {
+            return $this->respJson(-1, '已存在', []);
+        }
     }
 }

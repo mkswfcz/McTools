@@ -94,7 +94,7 @@ class BaseController extends Controller
             return $this->respJson(0, 'access not allowed', ['role' => $role]);
         }
         #顺序
-        $this->loadRemoteSource();
+//        $this->loadRemoteSource();
         $this->loadPublicStatic();
         $this->setStaticFiles($namespace, $controller, $action);
         $this->setStaticFiles($namespace, $controller, $action, 'js');

@@ -44,7 +44,11 @@ class BaseModel extends Model
             $conditions['order'] = 'id desc';
             $conditions['limit'] = 1;
         }
-        return self::find($conditions);
+        $result = self::query()
+            ->orderBy('id desc')
+            ->limit(1)
+            ->execute();
+        return $result;
     }
 
     /**
