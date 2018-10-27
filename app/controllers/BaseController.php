@@ -29,7 +29,7 @@ class BaseController extends Controller
             if (!isNull($uris)) {
                 $method = 'add' . strtoupper($type);
                 foreach ($uris as $uri) {
-                    $this->assets->$method('//'.$uri);
+                    $this->assets->$method('//' . $uri);
                 }
             }
         }
@@ -145,7 +145,11 @@ class BaseController extends Controller
             return $_REQUEST;
         }
         if (isset($_REQUEST[$key])) {
-            return $_REQUEST[$key];
+            if (!in_array($key, ['_uri'])) {
+                return decode($_REQUEST[$key]);
+            } else {
+                return $_REQUEST[key];
+            }
         } else {
             return $default;
         }

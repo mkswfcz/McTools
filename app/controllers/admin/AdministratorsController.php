@@ -17,8 +17,9 @@ class AdministratorsController extends \BaseController
 
     function loginAction()
     {
-        $params = $this->request();
-        debug('login: ',$params);
-        return $this->respJson(0,'',$params);
+        $result = [];
+        $result['username'] = $this->request('username');
+        $result['password'] = $this->request('password');
+        return $this->respJson(0,'',$result);
     }
 }

@@ -32,21 +32,14 @@ return new Phalcon\Config([
             'endpoint' => '127.0.0.1:6379'
         ]
     ],
-    'remote_static' => [
-        'js' =>
-            [
-                'crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/aes.js',
-                'crypto-js.googlecode.com/svn/tags/3.0.2/build/rollups/md5.js',
-                'crypto-js.googlecode.com/svn/tags/3.0.2/build/components/pad-zeropadding.js'
-            ]
-    ],
     'css' => [
         'bootstrap.min.css'
     ],
     'js' => [
         'jquery.min.js',
         'bootstrap.min.js',
-        'vue.min.js'
+        'vue.min.js',
+        'crypto-js.js'
     ],
     'default_page' => [
         'admin' => [
@@ -59,5 +52,9 @@ return new Phalcon\Config([
         ]
     ],
     'async' => ['default' => 10],
+    'encrypt' => [
+        'key' => '1234567812345678',
+        'iv' => '8765432187654321'
+    ]
 
 ]);

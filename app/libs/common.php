@@ -285,3 +285,11 @@ function checkIdCard($id_card)
     }
     return false;
 }
+
+
+function decode($value)
+{
+    $key = md5(date('Y/m/d'));
+    $iv = substr($key, 0, 16);
+    return openssl_decrypt(base64_decode($value), 'aes-256-cbc', md5($key), OPENSSL_RAW_DATA, $iv);
+}
