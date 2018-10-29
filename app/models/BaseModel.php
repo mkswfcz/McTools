@@ -14,7 +14,12 @@ class BaseModel extends Model
     {
         $this->setConnectionService("db");
     }
-    
+
+    function getMc()
+    {
+        return 'mc_tools';
+    }
+
     function toJson()
     {
         $columns = $this->getColumns();
@@ -22,7 +27,66 @@ class BaseModel extends Model
         foreach ($columns as $column) {
             $json[$column] = $this->$column;
         }
+        $json['mc'] = $this->mc;
         return $json;
+    }
+
+    static function getMethods($object)
+    {
+        $reflect = new ReflectionClass($object);
+        $methods = $reflect->getMethods();
+        return $methods;
+    }
+
+    static function isCountAble($object)
+    {
+        if ($object instanceof Countable) {
+            return true;
+        }
+        return false;
+    }
+
+    static function bindModel($class, $name, $arguments)
+    {
+        debug('params: ', $class, $name, $arguments);
+        $result = call_user_func('parent::' . $name, $arguments);
+        if ('findFirst' == $name && !isNull($result)) {
+            return $result;
+        }
+        if (self::isCountAble($result) && count($result) != 0) {
+            debug(self::isCountAble($result));
+            $objects = [];
+            foreach ($result as $value) {
+                $object = new $class();
+                foreach ($value as $k => $v) {
+                    $object->$k = $v;
+                }
+                $objects[] = $object;
+            }
+        }
+        return false;
+    }
+
+    static function __callStatic($name, $arguments)
+    {
+        $class = get_called_class();
+        debug($name, $arguments, strpos($name, 'findFirstBy'));
+        if (false !== strpos($name, 'findFirstBy')) {
+            $column = strtolower(str_replace('findFirstBy', '', $name));
+            debug('column: ', $column);
+            $objects = self::bindModel($class, 'findFirst',
+                [
+                    'conditions' => "{$column} =:{$column}:",
+                    'bind' => [strtolower($column) => $arguments[0]]
+                ]
+            );
+            return $objects;
+        }
+        if (0 === strpos($name, 'find')) {
+            $objects = self::bindModel($class, $name, $arguments);
+            debug('ob: ', $class);
+            return $objects;
+        }
     }
 
     function getColumns()
@@ -41,15 +105,26 @@ class BaseModel extends Model
     static function findLast($conditions = array())
     {
         if (empty($conditions)) {
-            $conditions['order'] = 'id desc';
-            $conditions['limit'] = 1;
+            $conditions = ['order' => 'id desc', 'limit' => 1];
         }
-        $result = self::find(['order' => 'id desc', 'limit' => 1]);
-        if (0 === count($result)) {
-            return false;
+        $result = self::find($conditions);
+        if (count($result) > 0) {
+            return $result[0];
         }
-        return $result[0];
+        return false;
     }
+
+    static function findFirst($conditions = array())
+    {
+        if (empty($conditions)) {
+            $conditions = ['order' => 'id asc', 'limit' => 1];
+        }
+        $result = self::find($conditions);
+        if (count($result) > 0) {
+            return $result[0];
+        }
+    }
+
 
     /**
      * @param $method
