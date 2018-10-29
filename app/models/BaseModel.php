@@ -49,12 +49,14 @@ class BaseModel extends Model
     static function bindModel($class, $name, $arguments)
     {
         debug('params: ', $class, $name, $arguments);
+        if (count($arguments) === 1) {
+            $arguments = current($arguments);
+        }
         $result = call_user_func('parent::' . $name, $arguments);
         if ('findFirst' == $name && !isNull($result)) {
             return $result;
         }
         if (self::isCountAble($result) && count($result) != 0) {
-            debug(self::isCountAble($result));
             $objects = [];
             foreach ($result as $value) {
                 $object = new $class();
@@ -72,8 +74,11 @@ class BaseModel extends Model
         $class = get_called_class();
         debug($name, $arguments, strpos($name, 'findFirstBy'));
         if (false !== strpos($name, 'findFirstBy')) {
-            $column = strtolower(str_replace('findFirstBy', '', $name));
+            $column = uncamelize(strtolower(str_replace('findFirstBy', '', $name)));
             debug('column: ', $column);
+            if ($name === 'findFirstBy') {
+                return self::bindModel($class, 'findFirst', $arguments);
+            }
             $objects = self::bindModel($class, 'findFirst',
                 [
                     'conditions' => "{$column} =:{$column}:",

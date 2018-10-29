@@ -26,7 +26,13 @@ class AdministratorsController extends \BaseController
         if (\Administrators::register($user_name, $password, 'admin')) {
             return $this->respJson(0, '创建成功', $result);
         } else {
-            return $this->respJson(-1, '已存在', []);
+            $cond['conditions'] = 'username = :u_name: and password=:pwd:';
+            $cond['bind'] = ['u_name' => $user_name, 'pwd' => $password];
+            $admin = \Administrators::findFirstBy($cond);
+            if ($admin) {
+                return $this->respJson(0, '登录成功', $admin->toJson());
+            }
+            return $this->respJson(-1, '登录失败');
         }
     }
 }

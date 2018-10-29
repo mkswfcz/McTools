@@ -50,4 +50,10 @@ class TempTask extends Phalcon\Cli\Task
     {
         $result = curlGet('http://ex.haobtc.io/test/user_agent');
     }
+
+    function mdAction()
+    {
+        debug(Articles::findFirstById(1));
+        debug(uncamelize('ModelTab'));
+    }
 }
