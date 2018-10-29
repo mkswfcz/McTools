@@ -10,12 +10,16 @@ class Administrators extends BaseModel
 {
     static function register($username, $password, $role = '')
     {
-        $user = Administrators::findLast();
-        print_r($user);
-        if (isNull($user)) {
-            debug('nul user');
-        } else {
-            debug('exist');
+        $admin = Administrators::findLast();
+        if (isNull($admin)) {
+            $user = new Administrators();
+            $user->username = $username;
+            $user->password = $password;
+            $user->role = $role;
+            $user->created_at = time();
+            $user->updated_at = time();
+            $result = $user->save();
+            return $result;
         }
         return false;
     }

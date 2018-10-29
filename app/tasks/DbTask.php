@@ -56,8 +56,8 @@ class DbTask extends Phalcon\Cli\Task
             debug($e->getMessage());
         }
         $base_sql = $this->getBaseSql($db_name);
-        $sql = $base_sql . '\'' . $sql . '\'';
         debug('sql: ', $sql);
+        $sql = $base_sql . '\'' . $sql . '\'';
         return $result;
     }
 

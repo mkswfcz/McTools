@@ -27,7 +27,6 @@ $(document).on('submit', ".ajax_form", function (event) {
         }
     });
 
-    alert(map);
     $.ajax({
         async: false,
         type: 'POST',

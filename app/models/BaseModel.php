@@ -14,7 +14,7 @@ class BaseModel extends Model
     {
         $this->setConnectionService("db");
     }
-
+    
     function toJson()
     {
         $columns = $this->getColumns();
@@ -44,11 +44,11 @@ class BaseModel extends Model
             $conditions['order'] = 'id desc';
             $conditions['limit'] = 1;
         }
-        $result = self::query()
-            ->orderBy('id desc')
-            ->limit(1)
-            ->execute();
-        return $result;
+        $result = self::find(['order' => 'id desc', 'limit' => 1]);
+        if (0 === count($result)) {
+            return false;
+        }
+        return $result[0];
     }
 
     /**
