@@ -19,15 +19,18 @@ class Administrators extends BaseModel
         if (isNull($admin)) {
             $user = new Administrators();
             $user->username = $username;
-            $user->password = $password;
+            $user->password = md5($password);
             $user->role = $role;
             $user->created_at = time();
             $user->updated_at = time();
             $result = $user->save();
-            return $result;
+            if ($result) {
+                return $user;
+            }
         }
         return false;
     }
+
     function toLoginJson()
     {
         $json = $this->toJson();

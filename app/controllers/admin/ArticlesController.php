@@ -19,7 +19,9 @@ class ArticlesController extends \BaseController
     function indexAction()
     {
         $article = \Articles::findFirstById(1);
-        $json = $article->toJson();
+        if ($article) {
+            $json = $article->toJson();
+        }
         debug($this->session->get('admin_id'));
         $this->view->build = 'this is namespace/articles/index';
     }
