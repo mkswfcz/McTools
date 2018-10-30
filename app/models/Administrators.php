@@ -8,6 +8,11 @@
  */
 class Administrators extends BaseModel
 {
+    function getRedirectUrl()
+    {
+        return '/admin/articles';
+    }
+
     static function register($username, $password, $role = '')
     {
         $admin = Administrators::findLast();

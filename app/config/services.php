@@ -32,6 +32,7 @@ if (php_sapi_name() != 'cli') {
         $eventsManager->attach(
             'dispatch:beforeDispatchLoop', function (Event $event, $dispatcher) {
             $clazz = $dispatcher->getHandlerClass();
+            debug('clazz: ', $clazz);
             if (!class_exists($clazz)) {
                 $dispatcher->forward(['namespace' => '', 'controller' => 'Handler', 'action' => 'route404', 'params' => [$clazz]]);
             }
@@ -61,19 +62,23 @@ if (php_sapi_name() != 'cli') {
     $di->set('router', function () {
         $router = new Router();
         $uri = $router->getRewriteUri();
-        list($namespace, $controller, $action) = parseUri($uri);
-//    debug('uri: ', $uri, $namespace, $controller, $action);
-        if ($controller == 'favicon.ico') {
-            $uri = $uri . '/images';
+        if (0 === strpos($uri, '/css/') || 0 === strpos($uri, '/js/')) {
+            debug('css route!',$uri);
+        } else {
+            list($namespace, $controller, $action) = parseUri($uri);
+            debug('uri: ', $uri, $namespace, $controller, $action);
+            if ($controller == 'favicon.ico') {
+                $uri = $uri . '/images';
+            }
+            $router->add(
+                $uri,
+                [
+                    'namespace' => $namespace,
+                    'controller' => $controller,
+                    'action' => $action,
+                ]
+            );
         }
-        $router->add(
-            $uri,
-            [
-                'namespace' => $namespace,
-                'controller' => $controller,
-                'action' => $action,
-            ]
-        );
         return $router;
     });
 

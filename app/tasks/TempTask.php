@@ -55,5 +55,8 @@ class TempTask extends Phalcon\Cli\Task
     {
         debug(Articles::findFirstById(1));
         debug(uncamelize('ModelTab'));
+        $redis = McRedis::getInstance('127.0.0.1:6379');
+        $result = $redis->keys('*aa1');
+        debug($result);
     }
 }

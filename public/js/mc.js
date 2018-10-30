@@ -31,6 +31,12 @@ $(document).on('submit', ".ajax_form", function (event) {
         async: false,
         type: 'POST',
         url: url,
-        data: map
+        data: map,
+        success: function (result) {
+            result = JSON.parse(result);
+            if (0 === result.error_code) {
+                alert(result.error_code);
+            }
+        }
     });
 })

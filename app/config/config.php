@@ -43,7 +43,7 @@ return new Phalcon\Config([
     ],
     'default_page' => [
         'admin' => [
-            'controller' => 'init',
+            'controller' => 'administrators',
             'action' => 'index'
         ],
         'front' => [

@@ -30,6 +30,7 @@ class AdministratorsController extends \BaseController
             $cond['bind'] = ['u_name' => $user_name, 'pwd' => $password];
             $admin = \Administrators::findFirstBy($cond);
             if ($admin) {
+                $this->session->set('admin_id', $admin->id);
                 return $this->respJson(0, '登录成功', $admin->toJson());
             }
             return $this->respJson(-1, '登录失败');

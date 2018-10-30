@@ -82,6 +82,30 @@ class BaseController extends Controller
         }
     }
 
+    function isDefaultPage($dispatcher)
+    {
+        list($namespace, $controller, $action) = $this->parseDispatcher($dispatcher);
+        debug($namespace, $controller, $action);
+        if ($namespace == 'admin' && $controller == 'administrators' && $action == 'index') {
+            return true;
+        }
+        return false;
+    }
+
+    function beforeAction($dispatcher)
+    {
+        $this->view->default = false;
+        if ($this->isDefaultPage($dispatcher)) {
+            $this->view->default = true;
+        }
+        list($namespace, $controller, $action) = $this->parseDispatcher($dispatcher);
+        if (!$this->session->get('admin_id') && !$this->isDefaultPage($dispatcher) && 'admin' == $namespace) {
+            $this->response->redirect('/admin');
+            return false;
+        }
+        debug('beforeAction: ', $this->view->default, $this->session->get('admin_id'));
+    }
+
     function beforeExecuteRoute($dispatcher)
     {
         list($namespace, $controller, $action) = $this->parseDispatcher($dispatcher);
@@ -98,6 +122,7 @@ class BaseController extends Controller
         $this->loadPublicStatic();
         $this->setStaticFiles($namespace, $controller, $action);
         $this->setStaticFiles($namespace, $controller, $action, 'js');
+        debug('beforeExecuteRoute: ', $controller, $action);
     }
 
     function isAllowed($role, $controller, $action)

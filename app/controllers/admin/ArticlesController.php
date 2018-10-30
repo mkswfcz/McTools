@@ -20,14 +20,14 @@ class ArticlesController extends \BaseController
     {
         $article = \Articles::findFirstById(1);
         $json = $article->toJson();
-        $this->session->set('user_name','tom');
+        debug($this->session->get('admin_id'));
         $this->view->build = 'this is namespace/articles/index';
     }
 
     function testAction()
     {
         $user_name = $this->session->get('user_name');
-        $this->view->test = 'namespace/testAction'.$user_name;
+        $this->view->test = 'namespace/testAction' . $user_name;
         $article = \Articles::findLast();
         debug($article);
     }
