@@ -28,4 +28,12 @@ class Administrators extends BaseModel
         }
         return false;
     }
+    function toLoginJson()
+    {
+        $json = $this->toJson();
+        $json = array_merge($json, [
+            'redirect_url' => $this->redirect_url
+        ]);
+        return $json;
+    }
 }

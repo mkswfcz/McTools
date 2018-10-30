@@ -28,4 +28,11 @@ class Articles extends BaseModel
         $article = Articles::findLast();
         debug('f: ', func_get_args(), $article);
     }
+
+    function getRedirectUrl()
+    {
+        return '/admin';
+    }
+
+
 }

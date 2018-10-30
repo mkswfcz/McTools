@@ -39,7 +39,8 @@ return new Phalcon\Config([
         'jquery.min.js',
         'bootstrap.min.js',
         'vue.min.js',
-        'crypto-js.js'
+        'crypto-js.js',
+        'jquery.form.js'
     ],
     'default_page' => [
         'admin' => [

@@ -27,16 +27,24 @@ $(document).on('submit', ".ajax_form", function (event) {
         }
     });
 
-    $.ajax({
+    self.ajaxSubmit({
         async: false,
         type: 'POST',
         url: url,
         data: map,
         success: function (result) {
+            console.log(result);
             result = JSON.parse(result);
             if (0 === result.error_code) {
-                alert(result.error_code);
+                url = result.data.redirect_url;
+                // window.open(url);
+                top.window.location.href = url;
+                return;
+            }else{
+                alert(result.error_reason);
             }
+
+            return false;
         }
     });
 })

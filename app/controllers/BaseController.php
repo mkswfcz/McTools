@@ -99,7 +99,7 @@ class BaseController extends Controller
             $this->view->default = true;
         }
         list($namespace, $controller, $action) = $this->parseDispatcher($dispatcher);
-        if (!$this->session->get('admin_id') && !$this->isDefaultPage($dispatcher) && 'admin' == $namespace) {
+        if (!$this->session->get('admin_id') && !$this->isDefaultPage($dispatcher) && 'admin' == $namespace && $action != 'login') {
             $this->response->redirect('/admin');
             return false;
         }
