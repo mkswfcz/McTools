@@ -10,10 +10,22 @@
 namespace admin;
 class ArticlesController extends \BaseController
 {
+    function newAction()
+    {
+
+    }
+
     function createAction()
     {
-        $result = \Articles::createArticles();
-        echo 'create: article namespace' . PHP_EOL;
+        $title = $this->request('title');
+        $content = $this->request('content');
+        $article = new \Articles();
+        $article->title = $title;
+        $article->content = $content;
+        if ($article->save()) {
+            return $this->respJson(0, '创建成功');
+        }
+        return $this->respJson(-1,'创建失败');
     }
 
     function indexAction()

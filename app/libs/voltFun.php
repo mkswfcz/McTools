@@ -19,7 +19,6 @@ class voltFun
     }
 
 
-
     static function confirm($head = '', $content = '', $uri, $target)
     {
         $html = "<div class='modal fade' id=$target tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
@@ -43,6 +42,71 @@ class voltFun
                 </div>
             </div>
         </div>";
+        return $html;
+    }
+
+    static function modalForm($method, $action, $id, $onSubmit, $title)
+    {
+        $form_html = self::form(['method' => $method, 'action' => $action, 'class' => 'form-horizontal', 'role' => 'form', 'id' => 'form_data', 'onsubmit' => $onSubmit]);
+        $form_html .= "
+<div class='modal fade' id='{$id}' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+            <div class='modal-header'>
+                <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>
+                    &times;
+                </button>
+                 <h4 class='modal-title' id='myModalLabel'>
+                 {$title}
+                 </h4>
+            </div>
+            <div class='modal-body'>
+                <form class='form-horizontal' role='form'>";
+        debug('modal_form: ', $form_html);
+        return $form_html;
+    }
+
+    static function modalText($label,$name, $content,$placeholder)
+    {
+        return " <div class='form-group'>
+                        <label for='{$name}' class='col-sm-3 control-label'>{$label}</label>
+                        <div class='col-sm-9'><textarea class='form-control' name='{$name}' value='{$content}' id='{$name}'
+                                          placeholder='{$placeholder}'>
+                                </textarea>";
+    }
+
+    static function modalInput($label, $type, $name, $value, $placeholder)
+    {
+        $html = " 
+ 
+        <div class='form-group'>
+                        <label for='{$name}' class='col-sm-3 control-label'>{$label}</label>
+                        <div class='col-sm-9'>
+                            <input type='{$type}' class='form-control' id='{$name}' name='{$name}' value='{$value}'
+                                   placeholder='{$placeholder}'>
+                        </div>
+                    </div>";
+        debug('modal_form: ', $html);
+        return $html;
+    }
+
+    static function modalFooter($operate)
+    {
+        $html = " 
+             </form>
+            </div>
+            <div class='modal-footer'>
+                <button type='button' class='btn btn-default' data-dismiss='modal'>关闭
+                </button>
+                <button type='submit' class='btn btn-primary'>
+                    {$operate}
+                </button><span id='tip'> </span>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</form>";
+        debug('modal_form: ', $html);
         return $html;
     }
 
@@ -80,12 +144,14 @@ class voltFun
         }
         return $real_link;
     }
+
     static function ajax_link($link_name, $target)
     {
         $html = "<a class='list-group-item' style='text-decoration: none' data-toggle='modal' data-target=#{$target}>
         {$link_name}</a>";
         return $html;
     }
+
     /**
      * @param array $contents
      * ['Title1':['link_title':'link_1','Title2':...]]

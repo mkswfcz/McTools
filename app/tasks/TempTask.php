@@ -62,5 +62,6 @@ class TempTask extends Phalcon\Cli\Task
         $redis = McRedis::getInstance('127.0.0.1:6379');
         $result = $redis->keys('*aa1');
         debug($result);
+        debug(voltFun::ajax_link('新建','myadmin'));
     }
 }
