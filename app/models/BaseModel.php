@@ -31,6 +31,11 @@ class BaseModel extends Model
         return $json;
     }
 
+    function beforeUpdate()
+    {
+        $this->updated_at = time();
+    }
+
     static function getMethods($object)
     {
         $reflect = new ReflectionClass($object);

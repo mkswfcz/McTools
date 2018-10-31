@@ -53,6 +53,10 @@ class TempTask extends Phalcon\Cli\Task
 
     function mdAction()
     {
+//        Articles::createArticles();
+        $article = Articles::findFirstById(1);
+        $article->title = 'hello';
+        $article->update();
         debug(Articles::findFirstById(1));
         debug(uncamelize('ModelTab'));
         $redis = McRedis::getInstance('127.0.0.1:6379');

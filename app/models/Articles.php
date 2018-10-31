@@ -19,6 +19,8 @@ class Articles extends BaseModel
         $article = new Articles();
         $article->title = $libs[self::randIndex($libs)] . $libs[self::randIndex($libs)];
         $article->content = md5(date('Y-m-d H:i:s'));
+        $article->created_at = time();
+        $article->updated_at = time();
         $result = $article->save();
         return $result;
     }
