@@ -3,7 +3,7 @@
         登录
     </div>
     {{ form(['action':'/admin/administrators/login','method':'post','class':'ajax_form','style':['margin-top':'10%']]) }}
-    {{ input(['type':'text','name':'username','placeholder':'用户名','style':['margin-top':'2%']]) }}
-    {{ input(['type':'password','name':'password','placeholder':'密码','style':['margin-top':'2%']]) }}
-    {{ input(['type':'submit','value':'登录','style':['margin-top':'2%','background-color':'#bce8f1'],'class':'btc btc-primary']) }}
+    {{ input(['type':'text','name':'username','placeholder':'用户名','class':'admin_input']) }}
+    {{ input(['type':'password','name':'password','placeholder':'密码','class':'admin_input']) }}
+    {{ input(['type':'submit','value':'登录','class':'login_submit']) }}
 </div>

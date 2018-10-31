@@ -15,10 +15,11 @@
         {{ dirLink(['AMark':['Login':'/admin/administrators','ajax_link_Logout':'myModal']]) }}
     {% endif %}
 </div>
-{{ confirm('','退出登录?','/admin/administrators/logout','myModal') }}
 <div class="mc_admin_content">
     {{ content() }}
 </div>
+{{ confirm('','退出登录?','/admin/administrators/logout','myModal') }}
+
 {{ this.assets.outputJs('footer') }}
 </body>
 
