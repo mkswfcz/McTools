@@ -18,5 +18,34 @@
 }
 
 
+#modal_body {
+    width: 100%;
+    float: left;
+}
 
+#modal_text {
+    width: 100%;
+    float: left;
+    margin-top: 10px;
+}
+
+#modal_input {
+    width: 100%;
+    float: left;
+    margin-top: 10px;
+}
+
+#modal_label {
+    width: auto;
+    text-align: right;
+    font-family: "STHeiti";
+}
+
+#modal_foot {
+    width: 100%;
+    float: right;
+    height: 40px;
+    text-align: center;
+    margin-top: 10px;
+}
 

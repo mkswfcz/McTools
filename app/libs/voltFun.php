@@ -49,10 +49,10 @@ class voltFun
     {
         $form_html = self::form(['method' => $method, 'action' => $action, 'class' => 'form-horizontal', 'role' => 'form', 'id' => 'form_data', 'onsubmit' => $onSubmit]);
         $form_html .= "
-<div class='modal fade' id='{$id}' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+<div class='modal fade' id='{$id}' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true' style='float: left;'>
     <div class='modal-dialog'>
-        <div class='modal-content'>
-            <div class='modal-header'>
+        <div class='modal-content' style='float: left;'>
+            <div class='modal-header' style='height: 10%'>
                 <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>
                     &times;
                 </button>
@@ -60,27 +60,35 @@ class voltFun
                  {$title}
                  </h4>
             </div>
-            <div class='modal-body'>
-                <form class='form-horizontal' role='form'>";
+            <div id='modal_body' >
+                <form>";
         debug('modal_form: ', $form_html);
         return $form_html;
     }
 
-    static function modalText($label,$name, $content,$placeholder)
+    static function modalText($label, $name, $content, $placeholder)
     {
-        return " <div class='form-group'>
-                        <label for='{$name}' class='col-sm-3 control-label'>{$label}</label>
-                        <div class='col-sm-9'><textarea class='form-control' name='{$name}' value='{$content}' id='{$name}'
+        return " <div id='modal_text'>
+                       <label id='modal_label'for='{$name}' class='col-sm-3 control-label'>{$label}</label>
+                        <div class='col-sm-9'><textarea  style='height: 100%; width: 100%;'class='form-control' name='{$name}' value='{$content}' id='{$name}'
                                           placeholder='{$placeholder}'>
-                                </textarea>";
+                                </textarea>
+                        </div>
+                 </div>";
     }
 
-    static function modalInput($label, $type, $name, $value, $placeholder)
+    static function modalInput($label, $type, $name, $value, $placeholder, $styles = array())
     {
-        $html = " 
- 
-        <div class='form-group'>
-                        <label for='{$name}' class='col-sm-3 control-label'>{$label}</label>
+        $html = "<div id='modal_input' > ";
+        if (!empty($styles)) {
+            $style = '';
+            foreach ($styles as $k => $v) {
+                $style .= $k . ':' . $v . ';';
+            }
+            $html = "<div id='modal_input'>";
+        }
+        $html .= "  
+                        <label id='modal_label'for='{$name}' class='col-sm-3 control-label'>{$label}</label>
                         <div class='col-sm-9'>
                             <input type='{$type}' class='form-control' id='{$name}' name='{$name}' value='{$value}'
                                    placeholder='{$placeholder}'>
@@ -95,9 +103,7 @@ class voltFun
         $html = " 
              </form>
             </div>
-            <div class='modal-footer'>
-                <button type='button' class='btn btn-default' data-dismiss='modal'>关闭
-                </button>
+            <div id='modal_foot'>
                 <button type='submit' class='btn btn-primary'>
                     {$operate}
                 </button><span id='tip'> </span>
