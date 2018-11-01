@@ -103,8 +103,9 @@ class voltFun
         $html = " 
              </form>
             </div>
+              <div id='form_error'></div>
             <div id='modal_foot'>
-                <button type='submit' class='btn btn-primary'>
+                <button type='submit' class='btn btn-primary' style='margin-bottom: 10px;'>
                     {$operate}
                 </button><span id='tip'> </span>
             </div>
@@ -141,9 +142,12 @@ class voltFun
     {
         $real_link = '';
         foreach ($links as $title => $link) {
-            if (0 === strpos($title, 'ajax_link')) {
+            if (0 === strpos($title, 'ajax_link_')) {
                 $title = str_replace('ajax_link_', '', $title);
                 $real_link .= self::ajax_link($title, $link);
+            } elseif (0 === strpos($title, 'modal_link_')) {
+                $title = str_replace('modal_link_', '', $title);
+                $real_link .= self::modal_link($title, $link);
             } else {
                 $real_link .= self::link($link, $title);
             }
@@ -156,6 +160,11 @@ class voltFun
         $html = "<a class='list-group-item' style='text-decoration: none' data-toggle='modal' data-target=#{$target}>
         {$link_name}</a>";
         return $html;
+    }
+
+    static function modal_link($link_name, $target)
+    {
+        return "<a  data-toggle='modal'  data-target=#{$target}>{$link_name}</a>";
     }
 
     /**

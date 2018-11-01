@@ -22,10 +22,13 @@ class ArticlesController extends \BaseController
         $article = new \Articles();
         $article->title = $title;
         $article->content = $content;
+        if (isNull($title) || isNull($content)) {
+            return $this->respJson(-1,'标题或内容为空');
+        }
         if ($article->save()) {
             return $this->respJson(0, '创建成功');
         }
-        return $this->respJson(-1,'创建失败');
+        return $this->respJson(-1, '创建失败');
     }
 
     function indexAction()
