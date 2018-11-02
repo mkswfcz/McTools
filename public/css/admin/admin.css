@@ -4,7 +4,7 @@
     /*position: relative;*/
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     margin-left: 20px;
-    margin-top: 8%;
+    margin-top: 5%;
     margin-right: 20px;
     float: left;
     text-align: center;
@@ -14,7 +14,7 @@
 
 .mc_admin_content {
     float: left;
-    margin-top: 8%;
+    margin-top: 5%;
     margin-left: 20px;
 }
 
@@ -74,14 +74,16 @@
 }
 
 #modal_th {
-    width: 18px;
+    width: auto;
+    height: 20px;
     font-size: 16px;
     color: #5e5e5e;
     /*border: #999999 1px solid;*/
 }
 
 #modal_td {
-    width: 18px;
+    width: auto;
+    height: 20px;
 }
 
 a:hover {

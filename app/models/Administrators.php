@@ -10,7 +10,7 @@ class Administrators extends BaseModel
 {
     function getRedirectUrl()
     {
-        return '/admin/articles';
+        return '/admin/init';
     }
 
     static function register($username, $password, $role = '')

@@ -12,6 +12,6 @@ class InitController extends \BaseController
 {
     function indexAction()
     {
-
+        $this->view->welcome = 'Welcome to Mc!';
     }
 }
