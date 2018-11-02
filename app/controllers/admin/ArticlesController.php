@@ -28,7 +28,7 @@ class ArticlesController extends \BaseController
             return $this->respJson(-1, '标题或内容为空');
         }
         if ($article->save()) {
-            return $this->respJson(0, '创建成功');
+            return $this->respJson(0, '创建成功',['redirect_url'=>'/admin/articles']);
         }
         return $this->respJson(-1, '创建失败');
     }

@@ -53,7 +53,7 @@ class voltFun
     <div class='modal-dialog'>
         <div class='modal-content' style='float: left;'>
             <div class='modal-header' style='height: 10%'>
-                <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>
+                <button id='modal_close' type='button' class='close' data-dismiss='modal' aria-hidden='true'>
                     &times;
                 </button>
                  <h4 class='modal-title' id='myModalLabel'>
@@ -69,9 +69,9 @@ class voltFun
     {
         return " <div id='modal_text'>
                        <label id='modal_label'for='{$name}' class='col-sm-3 control-label'>{$label}</label>
-                        <div class='col-sm-9'><input type='text' style='height: 100%; width: 100%;'class='form-control' name='{$name}' value='{$content}' id='{$name}'
+                        <div class='col-sm-9'><textarea style='height: 100%; width: 100%;'class='form-control' name='{$name}' value='{$content}' id='{$name}'
                                           placeholder='{$placeholder}'>
-                                </input>
+                                </textarea>
                         </div>
                  </div>";
     }

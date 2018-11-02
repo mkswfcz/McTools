@@ -122,8 +122,13 @@ $(document).on('click', '#modal_submit', function (event) {
             var error_area = document.getElementById('form_error');
             result = JSON.parse(result);
             $("#form_error").empty();
-            console.log(result.error_reason)
-            error_area.append(result.error_reason);
+            if (result.error_code !== 0) {
+                error_area.append(result.error_reason);
+            } else {
+                var url = result.data.redirect_url;
+                console.log('url: '+url);
+                top.window.location.href = url;
+            }
             return false;
         }
     });

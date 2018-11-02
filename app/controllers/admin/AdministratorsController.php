@@ -33,10 +33,10 @@ class AdministratorsController extends \BaseController
             $cond['bind'] = ['u_name' => $user_name, 'pwd' => md5($password)];
             $admin = \Administrators::findFirstBy($cond);
             if ($admin) {
-//                $id = $this->session->get('admin_id');
-//                if ($id === $admin->id) {
-//                    return $this->respJson(-1, '已登录');
-//                }
+                $id = $this->session->get('admin_id');
+                if ($id === $admin->id) {
+                    return $this->respJson(-1, '已登录');
+                }
                 $this->session->set('admin_id', $admin->id);
                 return $this->respJson(0, '登录成功',['redirect_url'=>$admin->redirect_url]);
             }
