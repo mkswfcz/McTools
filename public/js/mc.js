@@ -40,13 +40,12 @@ window.alert = function (str) {
 }
 
 function encrypt(value) {
-    // var date = new Date();
-    // var t = CryptoJS.MD5(date.toLocaleDateString());
-    // var i = t.toString().slice(0, 16);
+    var date = new Date();
+    var timestamp = Date.parse(date.toLocaleDateString()) / 1000;
+    var time_md5 = CryptoJS.MD5(timestamp.toString()).toString();
+    var iv = time_md5.slice(0, 16);
 
-    var key = '1111111111111111';
-    var iv = '1234567812345678';
-    var key_hash = CryptoJS.MD5(key).toString();
+    var key_hash = CryptoJS.MD5(time_md5).toString();
     var new_key = CryptoJS.enc.Utf8.parse(key_hash);
     var new_iv = CryptoJS.enc.Utf8.parse(iv);
     var encrypted = CryptoJS.AES.encrypt(value, new_key, {
@@ -69,17 +68,17 @@ $(document).on('submit', ".ajax_form", function (event) {
             map[k] = encrypt(v);
         }
     });
-
+    console.log(map);
     self.ajaxSubmit({
         async: false,
         type: 'POST',
         url: url,
         data: map,
         success: function (result) {
-            console.log(result);
             result = JSON.parse(result);
             if (0 === result.error_code) {
                 url = result.data.redirect_url;
+                console.log(result.error_reason);
                 // window.open(url);
                 top.window.location.href = url;
                 return;
@@ -87,6 +86,44 @@ $(document).on('submit', ".ajax_form", function (event) {
                 alert(result.error_reason);
             }
 
+            return false;
+        }
+    });
+})
+
+
+$(document).on('click', '#modal_submit', function (event) {
+    event.preventDefault();
+    var url = $('.form-horizontal').attr('action');
+    var map = {};
+    $('input').each(function (index, item) {
+        var k = $(this).attr('name');
+        var v = $("input[name=" + "'" + k + "']").val();
+        if (k !== undefined) {
+            console.log('k:' + k + ' v:' + v);
+            map[k] = encrypt(v);
+        }
+    });
+    $('textarea').each(function (index, item) {
+        var k = $(this).attr('name');
+        var v = $("textarea[name=" + "'" + k + "']").val();
+        if (k !== undefined) {
+            console.log('k:' + k + ' v:' + v);
+            map[k] = encrypt(v);
+        }
+    })
+    console.log(map);
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: url,
+        data: map,
+        success: function (result) {
+            var error_area = document.getElementById('form_error');
+            result = JSON.parse(result);
+            $("#form_error").empty();
+            console.log(result.error_reason)
+            error_area.append(result.error_reason);
             return false;
         }
     });

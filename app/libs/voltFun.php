@@ -19,7 +19,6 @@ class voltFun
     }
 
 
-
     static function confirm($head = '', $content = '', $uri, $target)
     {
         $html = "<div class='modal fade' id=$target tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
@@ -43,6 +42,75 @@ class voltFun
                 </div>
             </div>
         </div>";
+        return $html;
+    }
+
+    static function modalForm($method, $action, $id, $onSubmit, $title)
+    {
+        $form_html = self::form(['method' => $method, 'action' => $action, 'class' => 'form-horizontal', 'role' => 'form', 'id' => 'form_data', 'onsubmit' => $onSubmit]);
+        $form_html .= "
+<div class='modal fade' id='{$id}' tabindex='-1' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true' style='float: left;'>
+    <div class='modal-dialog'>
+        <div class='modal-content' style='float: left;'>
+            <div class='modal-header' style='height: 10%'>
+                <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>
+                    &times;
+                </button>
+                 <h4 class='modal-title' id='myModalLabel'>
+                 {$title}
+                 </h4>
+            </div>
+            <div id='modal_body' >
+                <form>";
+        return $form_html;
+    }
+
+    static function modalText($label, $name, $content, $placeholder)
+    {
+        return " <div id='modal_text'>
+                       <label id='modal_label'for='{$name}' class='col-sm-3 control-label'>{$label}</label>
+                        <div class='col-sm-9'><input type='text' style='height: 100%; width: 100%;'class='form-control' name='{$name}' value='{$content}' id='{$name}'
+                                          placeholder='{$placeholder}'>
+                                </input>
+                        </div>
+                 </div>";
+    }
+
+    static function modalInput($label, $type, $name, $value, $placeholder, $styles = array())
+    {
+        $html = "<div id='modal_input' > ";
+        if (!empty($styles)) {
+            $style = '';
+            foreach ($styles as $k => $v) {
+                $style .= $k . ':' . $v . ';';
+            }
+            $html = "<div id='modal_input'>";
+        }
+        $html .= "  
+                        <label id='modal_label'for='{$name}' class='col-sm-3 control-label'>{$label}</label>
+                        <div class='col-sm-9'>
+                            <input type='{$type}' class='form-control' id='{$name}' name='{$name}' value='{$value}'
+                                   placeholder='{$placeholder}'>
+                        </div>
+                    </div>";
+        return $html;
+    }
+
+    static function modalFooter($operate)
+    {
+        $html = " 
+             </form>
+            </div>
+              <div id='form_error'></div>
+            <div id='modal_foot'>
+                <button id='modal_submit' type='submit' class='btn btn-primary' style='margin-bottom: 10px;'>
+                    {$operate}
+                </button><span id='tip'> </span>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</form>";
         return $html;
     }
 
@@ -71,21 +139,31 @@ class voltFun
     {
         $real_link = '';
         foreach ($links as $title => $link) {
-            if (0 === strpos($title, 'ajax_link')) {
+            if (0 === strpos($title, 'ajax_link_')) {
                 $title = str_replace('ajax_link_', '', $title);
                 $real_link .= self::ajax_link($title, $link);
+            } elseif (0 === strpos($title, 'modal_link_')) {
+                $title = str_replace('modal_link_', '', $title);
+                $real_link .= self::modal_link($title, $link);
             } else {
                 $real_link .= self::link($link, $title);
             }
         }
         return $real_link;
     }
+
     static function ajax_link($link_name, $target)
     {
         $html = "<a class='list-group-item' style='text-decoration: none' data-toggle='modal' data-target=#{$target}>
         {$link_name}</a>";
         return $html;
     }
+
+    static function modal_link($link_name, $target)
+    {
+        return "<a  data-toggle='modal'  data-target=#{$target}>{$link_name}</a>";
+    }
+
     /**
      * @param array $contents
      * ['Title1':['link_title':'link_1','Title2':...]]

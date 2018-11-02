@@ -171,9 +171,11 @@ class BaseController extends Controller
         }
         if (isset($_REQUEST[$key])) {
             if (!in_array($key, ['_uri'])) {
-                return decode($_REQUEST[$key]);
+                $value = decode($_REQUEST[$key]);
+                debug('request: ',$_REQUEST[$key],$value);
+                return $value;
             } else {
-                return $_REQUEST[key];
+                return $_REQUEST[$key];
             }
         } else {
             return $default;

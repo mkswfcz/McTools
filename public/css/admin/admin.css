@@ -11,12 +11,62 @@
     background-color: whitesmoke;
     border-radius: 10px;
 }
+
 .mc_admin_content {
     float: left;
     margin-top: 10%;
     margin-left: 20px;
 }
 
+#modal_body {
+    width: 100%;
+    float: left;
+}
 
+#modal_text {
+    width: 100%;
+    float: left;
+    margin-top: 10px;
+}
 
+#modal_input {
+    width: 100%;
+    float: left;
+    margin-top: 10px;
+}
 
+#modal_label {
+    width: auto;
+    text-align: right;
+    font-family: "STHeiti";
+}
+
+#modal_foot {
+    width: 100%;
+    float: right;
+    height: 40px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+#modal_link {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+
+#form_error {
+    color: red;
+    height: 10px;
+    text-align: left;
+    margin-left: 15%;
+}
+
+a:hover {
+    text-decoration: none;
+}
