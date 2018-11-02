@@ -1,4 +1,4 @@
-window.alert = function(str) {
+window.alert = function (str) {
     var shield = document.createElement("DIV");
     shield.id = "shield";
     shield.style.position = "absolute";
@@ -10,7 +10,7 @@ window.alert = function(str) {
     shield.style.marginTop = "-110px";
     shield.style.zIndex = "25";
     var alertFram = document.createElement("DIV");
-    alertFram.id="alertFram";
+    alertFram.id = "alertFram";
     alertFram.style.position = "absolute";
     alertFram.style.width = "280px";
     alertFram.style.height = "150px";
@@ -23,26 +23,32 @@ window.alert = function(str) {
     alertFram.style.zIndex = "300";
     strHtml = "<ul style=\"list-style:none;margin:0px;padding:0px;width:100%\">\n";
     strHtml += " <li style=\"background:#626262;text-align:left;padding-left:20px;font-size:14px;font-weight:bold;height:25px;line-height:25px;border:1px solid #F9CADE;color:white\">Prompt</li>\n";
-    strHtml += " <li style=\"background:#787878;text-align:center;font-size:12px;height:95px;line-height:95px;border-left:1px solid #F9CADE;border-right:1px solid #F9CADE;color:#DCC722\">"+str+"</li>\n";
+    strHtml += " <li style=\"background:#787878;text-align:center;font-size:12px;height:95px;line-height:95px;border-left:1px solid #F9CADE;border-right:1px solid #F9CADE;color:#DCC722\">" + str + "</li>\n";
     strHtml += " <li style=\"background:#626262;text-align:center;font-weight:bold;height:30px;line-height:25px; border:1px solid #F9CADE;\"><input type=\"button\" value=\"确 定\" onclick=\"doOk()\" style=\"width:80px;height:20px;background:#626262;color:white;border:1px solid white;font-size:14px;line-height:20px;outline:none;margin-top: 4px\"/></li>\n";
-    strHtml += "</ul>\n"; alertFram.innerHTML = strHtml;
+    strHtml += "</ul>\n";
+    alertFram.innerHTML = strHtml;
     document.body.appendChild(alertFram);
     document.body.appendChild(shield);
-    this.doOk = function()
-    {
+    this.doOk = function () {
         alertFram.style.display = "none";
         shield.style.display = "none";
     }
     alertFram.focus();
-    document.body.onselectstart = function(){return false;}; }
-function encrypt(value) {
-    var date = new Date();
-    var t = CryptoJS.MD5(date.toLocaleDateString());
-    var i = t.toString().slice(0, 16);
+    document.body.onselectstart = function () {
+        return false;
+    };
+}
 
-    var key_hash = CryptoJS.MD5(t.toString()).toString();
+function encrypt(value) {
+    // var date = new Date();
+    // var t = CryptoJS.MD5(date.toLocaleDateString());
+    // var i = t.toString().slice(0, 16);
+
+    var key = '1111111111111111';
+    var iv = '1234567812345678';
+    var key_hash = CryptoJS.MD5(key).toString();
     var new_key = CryptoJS.enc.Utf8.parse(key_hash);
-    var new_iv = CryptoJS.enc.Utf8.parse(i);
+    var new_iv = CryptoJS.enc.Utf8.parse(iv);
     var encrypted = CryptoJS.AES.encrypt(value, new_key, {
         iv: new_iv,
         mode: CryptoJS.mode.CBC,
@@ -77,7 +83,7 @@ $(document).on('submit', ".ajax_form", function (event) {
                 // window.open(url);
                 top.window.location.href = url;
                 return;
-            }else{
+            } else {
                 alert(result.error_reason);
             }
 
