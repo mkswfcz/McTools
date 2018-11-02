@@ -206,6 +206,21 @@ class voltFun
         return $html;
     }
 
+    static function getText($object, $property)
+    {
+        $reflect = new ReflectionClass($object);
+        $methods = $reflect->getMethods();
+        foreach ($methods as $method) {
+            $text_method = lcfirst(camelize($property)) . 'Text';
+            debug('method name: ',$method->name,$method->class, $text_method);
+            if ($text_method == $method->name) {
+                debug('text: ', $text_method);
+                return $object->$text_method();
+            }
+        }
+        return false;
+    }
+
     static function modalTable($objects, $properties)
     {
         $table = "<table id='modal_table' class='table table-striped table-hover'>";
@@ -235,7 +250,9 @@ class voltFun
             foreach ($vars as $key => $value) {
                 if (isset($properties[$key . '_text'])) {
                     #todo 若存在propertyText 则调用该方法
-                    $value = date('Y-m-d H:i:s', $value);
+                    $result = self::getText($object, $key);
+                    debug('res: ', $result);
+                    $value = $result ? $result : date('Y-m-d H:i:s', $value);
                 }
                 $table .= "<td id='modal_td'>{$value}</td>";
             }
