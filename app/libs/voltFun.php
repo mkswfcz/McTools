@@ -62,7 +62,6 @@ class voltFun
             </div>
             <div id='modal_body' >
                 <form>";
-        debug('modal_form: ', $form_html);
         return $form_html;
     }
 
@@ -70,9 +69,9 @@ class voltFun
     {
         return " <div id='modal_text'>
                        <label id='modal_label'for='{$name}' class='col-sm-3 control-label'>{$label}</label>
-                        <div class='col-sm-9'><textarea  style='height: 100%; width: 100%;'class='form-control' name='{$name}' value='{$content}' id='{$name}'
+                        <div class='col-sm-9'><input type='text' style='height: 100%; width: 100%;'class='form-control' name='{$name}' value='{$content}' id='{$name}'
                                           placeholder='{$placeholder}'>
-                                </textarea>
+                                </input>
                         </div>
                  </div>";
     }
@@ -94,7 +93,6 @@ class voltFun
                                    placeholder='{$placeholder}'>
                         </div>
                     </div>";
-        debug('modal_form: ', $html);
         return $html;
     }
 
@@ -105,7 +103,7 @@ class voltFun
             </div>
               <div id='form_error'></div>
             <div id='modal_foot'>
-                <button type='submit' class='btn btn-primary' style='margin-bottom: 10px;'>
+                <button id='modal_submit' type='submit' class='btn btn-primary' style='margin-bottom: 10px;'>
                     {$operate}
                 </button><span id='tip'> </span>
             </div>
@@ -113,7 +111,6 @@ class voltFun
     </div><!-- /.modal -->
 </div>
 </form>";
-        debug('modal_form: ', $html);
         return $html;
     }
 

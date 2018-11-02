@@ -67,17 +67,17 @@ $(document).on('submit', ".ajax_form", function (event) {
             map[k] = encrypt(v);
         }
     });
-
+    console.log(map);
     self.ajaxSubmit({
         async: false,
         type: 'POST',
         url: url,
         data: map,
         success: function (result) {
-            console.log(result);
             result = JSON.parse(result);
             if (0 === result.error_code) {
                 url = result.data.redirect_url;
+                console.log(result.error_reason);
                 // window.open(url);
                 top.window.location.href = url;
                 return;
@@ -91,19 +91,28 @@ $(document).on('submit', ".ajax_form", function (event) {
 })
 
 
-$(document).on('submit', '.form-horizontal', function (event) {
+$(document).on('click', '#modal_submit', function (event) {
     event.preventDefault();
-    var self = $(this);
-    var url = self.attr("action");
+    var url = $('.form-horizontal').attr('action');
     var map = {};
     $('input').each(function (index, item) {
         var k = $(this).attr('name');
         var v = $("input[name=" + "'" + k + "']").val();
         if (k !== undefined) {
+            console.log('k:' + k + ' v:' + v);
             map[k] = encrypt(v);
         }
     });
-    self.ajaxSubmit({
+    $('textarea').each(function (index, item) {
+        var k = $(this).attr('name');
+        var v = $("textarea[name=" + "'" + k + "']").val();
+        if (k !== undefined) {
+            console.log('k:' + k + ' v:' + v);
+            map[k] = encrypt(v);
+        }
+    })
+    console.log(map);
+    $.ajax({
         async: false,
         type: 'POST',
         url: url,
@@ -111,9 +120,10 @@ $(document).on('submit', '.form-horizontal', function (event) {
         success: function (result) {
             var error_area = document.getElementById('form_error');
             result = JSON.parse(result);
+            $("#form_error").empty();
+            console.log(result.error_reason)
             error_area.append(result.error_reason);
-            top.window.location.href = '/admin/articles';
-            return true;
+            return false;
         }
     });
 })
