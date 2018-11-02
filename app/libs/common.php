@@ -79,6 +79,7 @@ function info()
 
 function isNull($var)
 {
+    $var = trim($var);
     if (empty($var) || is_null($var)) {
         return true;
     }
