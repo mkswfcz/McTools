@@ -208,15 +208,10 @@ class voltFun
 
     static function getText($object, $property)
     {
-        $reflect = new ReflectionClass($object);
-        $methods = $reflect->getMethods();
-        foreach ($methods as $method) {
-            $text_method = lcfirst(camelize($property)) . 'Text';
-            debug('method name: ',$method->name,$method->class, $text_method);
-            if ($text_method == $method->name) {
-                debug('text: ', $text_method);
-                return $object->$text_method();
-            }
+        $text_method = lcfirst(camelize($property)) . 'Text';
+        if (method_exists($object, $text_method)) {
+            debug('text: ', $text_method);
+            return $object->$text_method();
         }
         return false;
     }
