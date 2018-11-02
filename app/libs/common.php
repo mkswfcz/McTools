@@ -295,7 +295,10 @@ function checkIdCard($id_card)
 
 function decode($value)
 {
-    $key = md5(date('Y/m/d'));
+    $timestamp = strtotime(date('Y/m/d'));
+    $key = md5($timestamp);
     $iv = substr($key, 0, 16);
+
+    debug('params: ', $key, $iv, $timestamp);
     return openssl_decrypt(base64_decode($value), 'aes-256-cbc', md5($key), OPENSSL_RAW_DATA, $iv);
 }

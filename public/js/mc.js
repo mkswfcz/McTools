@@ -41,12 +41,13 @@ window.alert = function (str) {
 
 function encrypt(value) {
     var date = new Date();
-    var t = CryptoJS.MD5(date.toLocaleDateString());
-    var i = t.toString().slice(0, 16);
+    var timestamp = Date.parse(date.toLocaleDateString()) / 1000;
+    var time_md5 = CryptoJS.MD5(timestamp.toString()).toString();
+    var iv = time_md5.slice(0, 16);
 
-    var key_hash = CryptoJS.MD5(t.toString()).toString();
+    var key_hash = CryptoJS.MD5(time_md5).toString();
     var new_key = CryptoJS.enc.Utf8.parse(key_hash);
-    var new_iv = CryptoJS.enc.Utf8.parse(i);
+    var new_iv = CryptoJS.enc.Utf8.parse(iv);
     var encrypted = CryptoJS.AES.encrypt(value, new_key, {
         iv: new_iv,
         mode: CryptoJS.mode.CBC,
