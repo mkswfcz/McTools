@@ -205,4 +205,44 @@ class voltFun
         $html = $begin_div . $end_div;
         return $html;
     }
+
+    static function modalTable($objects, $properties)
+    {
+        $table = "<table id='modal_table' class='table table-striped table-hover'>";
+        $table .= "<thead> <tr>";
+        $i = 1;
+        foreach ($objects as $key => $object) {
+            $vars = get_object_vars($object);
+            if (1 === $i) {
+                $keys = array_keys($vars);
+                foreach ($properties as $k => $v) {
+                    $temp_key = '';
+                    if (strpos($k, '_text')) {
+                        $temp_key = $k;
+                        $k = str_replace('_text', '', $k);
+                    }
+                    if (in_array($k, $keys)) {
+                        if (!isNull($temp_key)) {
+                            $k = $temp_key;
+                        }
+                        $table .= "<th id='modal_th'scope='col'>{$properties[$k]}</th>";
+                    }
+
+                }
+                $table .= "</tr></thead><tbody>";
+            }
+            $table .= "<tr>";
+            foreach ($vars as $key => $value) {
+                if (isset($properties[$key . '_text'])) {
+                    #todo 若存在propertyText 则调用该方法
+                    $value = date('Y-m-d H:i:s', $value);
+                }
+                $table .= "<td id='modal_td'>{$value}</td>";
+            }
+            $table .= "</tr>";
+            $i++;
+        }
+        $table .= "</tbody></table>";
+        return $table;
+    }
 }

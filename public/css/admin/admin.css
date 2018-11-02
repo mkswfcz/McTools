@@ -14,7 +14,7 @@
 
 .mc_admin_content {
     float: left;
-    margin-top: 10%;
+    margin-top: 8%;
     margin-left: 20px;
 }
 
@@ -65,6 +65,24 @@
     height: 10px;
     text-align: left;
     margin-left: 15%;
+}
+
+#modal_table {
+    float: left;
+    width: 800px;
+    margin-top: 10px;
+    /*width: 500px;*/
+}
+
+#modal_th {
+    width: 18px;
+    font-size: 16px;
+    color: #5e5e5e;
+    /*border: #999999 1px solid;*/
+}
+
+#modal_td {
+    width: 18px;
 }
 
 a:hover {

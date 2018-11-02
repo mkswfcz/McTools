@@ -54,14 +54,16 @@ class TempTask extends Phalcon\Cli\Task
     function mdAction()
     {
 //        Articles::createArticles();
-        $article = Articles::findFirstById(1);
-        $article->title = 'hello';
-        $article->update();
+        $articles = Articles::find();
+        foreach($articles as $article) {
+            $article->created_at = time() - 24 * 60 * 60;
+            $article->update();
+        }
         debug(Articles::findFirstById(1));
         debug(uncamelize('ModelTab'));
         $redis = McRedis::getInstance('127.0.0.1:6379');
         $result = $redis->keys('*aa1');
         debug($result);
-        debug(voltFun::ajax_link('新建','myadmin'));
+        debug(voltFun::ajax_link('新建', 'myadmin'));
     }
 }

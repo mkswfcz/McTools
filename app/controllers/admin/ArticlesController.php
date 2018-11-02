@@ -22,25 +22,21 @@ class ArticlesController extends \BaseController
         $article = new \Articles();
         $article->title = $title;
         $article->content = $content;
-        debug('request: ',$this->request());
+        debug('request: ', $this->request());
         debug('params: article: ', $title, $content);
         if (isNull($title) || isNull($content)) {
             return $this->respJson(-1, '标题或内容为空');
         }
         if ($article->save()) {
-            return $this->respJson(0, '创建成功',['redirect_url'=>'/admin/articles']);
+            return $this->respJson(0, '创建成功', ['redirect_url' => '/admin/articles']);
         }
         return $this->respJson(-1, '创建失败');
     }
 
     function indexAction()
     {
-        $article = \Articles::findFirstById(1);
-        if ($article) {
-            $json = $article->toJson();
-        }
-        debug($this->session->get('admin_id'));
-        $this->view->build = 'this is namespace/articles/index';
+        $articles = \Articles::find();
+        $this->view->articles = $articles;
     }
 
     function testAction()
