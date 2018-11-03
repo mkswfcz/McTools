@@ -33,6 +33,15 @@ class ArticlesController extends \BaseController
         return $this->respJson(-1, '创建失败');
     }
 
+    function editAction()
+    {
+        $id = $this->request('id');
+        $article = \Articles::findFirstById($id);
+        $this->view->content = $article->content;
+        $this->view->title = $article->title;
+        $this->view->id = $id;
+    }
+
     function indexAction()
     {
         $articles = \Articles::find();
