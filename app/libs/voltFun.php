@@ -216,40 +216,70 @@ class voltFun
         return false;
     }
 
-    static function modalTable($objects, $properties)
+    static function textReplace($stack, $needle)
+    {
+        if (strpos($stack, $needle)) {
+            debug('key: ', $stack, $needle);
+            return str_replace($needle, '', $stack);
+        }
+        return $stack;
+    }
+
+    static function buildHref($title, $links, $object)
+    {
+        $url = current(array_keys($links));
+        $params = current(array_values($links));
+        $url .= '?';
+        foreach ($params as $value) {
+            $url .= $value . '=' . $object->$value . '&';
+        }
+        $url = substr($url,0 ,strlen($url) - 1);
+        debug('row: ', $url);
+        return "<a href='{$url}'>{$title} <a>";
+    }
+
+    static function modalTable($objects, $properties, $row_links = array())
     {
         $table = "<table id='modal_table' class='table table-striped table-hover'>";
         $table .= "<thead> <tr>";
         $i = 1;
+        $link_titles = array_keys($row_links);
+
         foreach ($objects as $key => $object) {
             $vars = get_object_vars($object);
+
             if (1 === $i) {
                 $keys = array_keys($vars);
                 foreach ($properties as $k => $v) {
-                    $temp_key = '';
-                    if (strpos($k, '_text')) {
-                        $temp_key = $k;
-                        $k = str_replace('_text', '', $k);
-                    }
-                    if (in_array($k, $keys)) {
-                        if (!isNull($temp_key)) {
-                            $k = $temp_key;
-                        }
+                    $temp_key = self::textReplace($k, '_text');
+                    if (in_array($temp_key, $keys)) {
                         $table .= "<th id='modal_th'scope='col'>{$properties[$k]}</th>";
                     }
-
+                }
+                if (count($row_links) > 0) {
+                    foreach ($link_titles as $title) {
+                        debug('row: ', $title);
+                        $table .= "<th id='modal_th'scope='col'>{$title}</th>";
+                    }
                 }
                 $table .= "</tr></thead><tbody>";
             }
+
             $table .= "<tr>";
+
             foreach ($vars as $key => $value) {
                 if (isset($properties[$key . '_text'])) {
                     #todo 若存在propertyText 则调用该方法
                     $result = self::getText($object, $key);
-                    debug('res: ', $result);
                     $value = $result ? $result : date('Y-m-d H:i:s', $value);
                 }
                 $table .= "<td id='modal_td'>{$value}</td>";
+            }
+            if (count($row_links) > 0) {
+                foreach ($row_links as $title => $links) {
+                    $real_link = self::buildHref($title, $links, $object);
+                    $table .= "<td id='modal_td'>{$real_link}</td>";
+                }
             }
             $table .= "</tr>";
             $i++;
