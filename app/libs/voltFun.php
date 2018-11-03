@@ -225,17 +225,29 @@ class voltFun
         return $stack;
     }
 
-    static function buildHref($title, $links, $object)
+    static function parseHref($links)
     {
-        $url = current(array_keys($links));
-        $params = current(array_values($links));
-        $url .= '?';
-        foreach ($params as $value) {
-            $url .= $value . '=' . $object->$value . '&';
+        $result = [];
+        foreach ($links as $link_name => $link_params) {
+            $result [$link_name] = $link_params;
         }
-        $url = substr($url,0 ,strlen($url) - 1);
-        debug('row: ', $url);
-        return "<a href='{$url}'>{$title} <a>";
+        return $result;
+    }
+
+    static function buildHref($batch_links, $object)
+    {
+        $href = '';
+        foreach ($batch_links as $link_name => $links) {
+            foreach ($links as $url => $params) {
+                $url .= '?';
+                foreach ($params as $value) {
+                    $url .= $value . '=' . $object->$value . '&';
+                }
+                $url = substr($url, 0, strlen($url) - 1);
+                $href .= "<a href='{$url}'>{$link_name} </a><br>";
+            }
+        }
+        return $href;
     }
 
     static function modalTable($objects, $properties, $row_links = array())
@@ -258,7 +270,6 @@ class voltFun
                 }
                 if (count($row_links) > 0) {
                     foreach ($link_titles as $title) {
-                        debug('row: ', $title);
                         $table .= "<th id='modal_th'scope='col'>{$title}</th>";
                     }
                 }
@@ -277,7 +288,8 @@ class voltFun
             }
             if (count($row_links) > 0) {
                 foreach ($row_links as $title => $links) {
-                    $real_link = self::buildHref($title, $links, $object);
+                    $result = self::parseHref($links);
+                    $real_link = self::buildHref($result, $object);
                     $table .= "<td id='modal_td'>{$real_link}</td>";
                 }
             }
