@@ -30,7 +30,8 @@ return new Phalcon\Config([
     'cache' => [
         'redis' => [
             'endpoint' => '127.0.0.1:6379'
-        ]
+        ],
+        'ws_redis' => ['endpoint' => '127.0.0.1:6389']
     ],
     'css' => [
         'bootstrap.min.css'

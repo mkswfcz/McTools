@@ -303,3 +303,9 @@ function decode($value)
     debug('params: ', $key, $iv, $timestamp);
     return openssl_decrypt(base64_decode($value), 'aes-256-cbc', md5($key), OPENSSL_RAW_DATA, $iv);
 }
+
+
+function echoTip($str)
+{
+    echo "{$str}\n";
+}
