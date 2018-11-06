@@ -55,7 +55,7 @@ class TempTask extends Phalcon\Cli\Task
     {
 //        Articles::createArticles();
         $articles = Articles::find();
-        foreach($articles as $article) {
+        foreach ($articles as $article) {
             $article->created_at = time() - 24 * 60 * 60;
             $article->update();
         }
@@ -65,5 +65,12 @@ class TempTask extends Phalcon\Cli\Task
         $result = $redis->keys('*aa1');
         debug($result);
         debug(voltFun::ajax_link('新建', 'myadmin'));
+    }
+
+    function publishAction()
+    {
+        $redis  = McRedis::getInstance('127.0.0.1:6389');
+
+        $redis->publish('msg_0',json_encode(['channel'=>'price','message_type'=>'price']));
     }
 }
