@@ -53,10 +53,5 @@ return new Phalcon\Config([
             'action' => 'index'
         ]
     ],
-    'async' => ['default' => 10],
-    'encrypt' => [
-        'key' => '1234567812345678',
-        'iv' => '8765432187654321'
-    ]
-
+    'async' => ['default' => 10]
 ]);

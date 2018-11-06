@@ -309,3 +309,15 @@ function echoTip($str)
 {
     echo "{$str}\n";
 }
+
+function sys($key, $default = null)
+{
+    if (isset($_ENV[$key])) {
+        return $_ENV[$key];
+    }
+    $value = getenv($key);
+    if ($value) {
+        return $value;
+    }
+    return $default;
+}

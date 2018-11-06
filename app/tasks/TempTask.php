@@ -69,8 +69,13 @@ class TempTask extends Phalcon\Cli\Task
 
     function publishAction()
     {
-        $redis  = McRedis::getInstance('127.0.0.1:6389');
+        $redis = McRedis::getInstance('127.0.0.1:6389');
 
-        $redis->publish('msg_0',json_encode(['channel'=>'price','message_type'=>'price']));
+        $redis->publish('msg_0', json_encode(['channel' => 'price', 'message_type' => 'price']));
+    }
+
+    function mailAction()
+    {
+        Mailer::send('test', ['2693925861@qq.com'], "hello mailer");
     }
 }
