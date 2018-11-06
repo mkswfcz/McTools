@@ -321,3 +321,27 @@ function sys($key, $default = null)
     }
     return $default;
 }
+
+function qr($text, $outfile, $infile = '', $level = 'M', $size = 4, $margin = 3)
+{
+    \PHPQRCode\QRcode::png($text, $outfile, $level, $size, $margin);
+    $QR = $outfile;
+    if (file_exists($infile)) {
+        $QR = imagecreatefromstring(file_get_contents($QR));
+        $logo = imagecreatefromstring(file_get_contents($infile));
+        $QR_width = imagesx($QR);
+
+        $logo_width = imagesx($logo);
+        $logo_height = imagesy($logo);
+
+        $logo_qr_width = $QR_width / 4;
+        $scale = $logo_width / $logo_qr_width;
+        $logo_qr_height = $logo_height / $scale;
+        $from_width = ($QR_width - $logo_qr_width) / 2;
+
+        imagecopyresampled($QR, $logo, $from_width, $from_width, 0, 0, $logo_qr_width, $logo_qr_height, $logo_width, $logo_height);
+        imagejpeg($QR, APP_ROOT . '/public/qrcode.jpeg');
+        return APP_ROOT . '/public/qrcode.jpeg';
+    }
+    return $QR;
+}

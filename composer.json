@@ -1,6 +1,7 @@
 {
   "require": {
     "nategood/httpful": "*",
-    "phpmailer/phpmailer": "~6.0"
+    "phpmailer/phpmailer": "~6.0",
+    "aferrandini/phpqrcode": "1.0.1"
   }
 }
