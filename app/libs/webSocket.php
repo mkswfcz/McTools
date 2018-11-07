@@ -20,9 +20,9 @@ class webSocket
         self::$redis_endpoint = $cache->endpoint;
 
         $this->server->set([
-            'daemonize' => 1,
+//            'daemonize' => 1,
             'worker_num' => 1,
-            'log_file'=>APP_ROOT.'/logs/ws.log'
+//            'log_file' => APP_ROOT . '/logs/ws.log'
         ]);
         $this->server->on('open', [$this, 'onOpen']);
         $this->server->on('message', [$this, 'onMessage']);
@@ -38,10 +38,58 @@ class webSocket
         echoTip("ws server: handshake success with fd: {$request->fd}");
     }
 
+    function apply($server, $fd, $nick_name)
+    {
+        $chat_list = 'chat_user_list';
+        $redis = McRedis::getInstance(self::$redis_endpoint);
+
+        $redis->sadd($chat_list, $fd);
+        $redis->set($fd, $nick_name . '_' . $fd);
+        $server->push($fd, json_encode(['msg_type' => '系统消息', 'error_code' => 0, 'error_reason' => '申请成功']));
+
+        $exists_users = $redis->smembers($chat_list);
+        debug('uids: ', $exists_users);
+        if (count($exists_users) > 0) {
+            foreach ($exists_users as $user_fd) {
+                debug($user_fd, $fd);
+                if ($user_fd != $fd) {
+                    $server->push($user_fd, json_encode(['msg_type' => '系统消息', 'error_reason' => "{$nick_name} 加入群聊!"]));
+                }
+            }
+        }
+    }
+
+    function speak($server, $fd, $content)
+    {
+        $redis = McRedis::getInstance(self::$redis_endpoint);
+        $nick_name = $redis->get($fd);
+        $u_fds = $redis->smembers('chat_user_list');
+        debug($u_fds);
+        foreach ($u_fds as $u_fd) {
+            debug('fd: ', $fd, $content);
+            $server->push($u_fd, json_encode(['msg_type' => "{$nick_name}", 'error_reason' => "{$content}"]));
+        }
+    }
+
+    function handleChat($server, $fd, $data)
+    {
+        $new_data = json_decode($data, true);
+        debug($new_data['nick_name']);
+        if ($new_data) {
+            if (isset($new_data['nick_name'])) {
+                $this->apply($server, $fd, $new_data['nick_name']);
+            }
+            debug('speak: ', $data);
+        } else {
+            $this->speak($server, $fd, $data);
+        }
+    }
+
     function onMessage(swoole_websocket_server $server, $frame)
     {
         echoTip("ws receive from {$frame->fd}:{$frame->data}, opcode:{$frame->opcode}, fin:{$frame->finish}");
-        self::sub($server, $frame->fd, $frame->data);
+//        self::sub($server, $frame->fd, $frame->data);
+        $this->handleChat($server, $frame->fd, $frame->data);
     }
 
     function workerStart($server, $work_id)
@@ -75,9 +123,16 @@ class webSocket
     function onClose($server, $fd)
     {
         $redis = McRedis::getInstance(self::$redis_endpoint);
+        if ($redis->sismember('chat_user_list', $fd)) {
+            $redis->srem('chat_user_list', $fd);
+            $redis->del($fd);
+        }
+
         $channel_keys = $redis->smembers('message_type_channel_list');
-        foreach ($channel_keys as $channel_key) {
-            $redis->del($channel_key);
+        if (count($channel_keys) > 0) {
+            foreach ($channel_keys as $channel_key) {
+                $redis->zrem($channel_key, $fd);
+            }
         }
         echoTip("client $fd closed!");
     }
@@ -96,6 +151,7 @@ class webSocket
         if (!isset($data['message_type']) || !isset($data['operate'])) {
             $result = json_encode(['error_code' => -1, 'error_reason' => '缺少参数']);
             $server->push($fd, $result);
+            return false;
         }
 
         $channel_key = self::getChannelKey($data['message_type']);

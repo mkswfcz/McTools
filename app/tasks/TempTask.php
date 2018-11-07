@@ -78,4 +78,20 @@ class TempTask extends Phalcon\Cli\Task
     {
         Mailer::send('test', ['2693925861@qq.com'], "hello mailer");
     }
+
+    function sisAction()
+    {
+        $redis = McRedis::getInstance('127.0.0.1:6389');
+        $redis->sadd('test_sis', 1);
+        $result = $redis->sismember('test_sis', 1);
+        debug($result);
+    }
+
+    function jsonAction()
+    {
+        $str = "hello world!";
+//        $str = "{\"hello\":\"world\"}";
+        debug(json_decode($str, true));
+
+    }
 }
