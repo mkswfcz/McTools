@@ -13,6 +13,12 @@ class Articles extends BaseModel
         return mt_rand(0, count($arrays) - 1);
     }
 
+    function getUpdatedAt()
+    {
+        debug('date: ', $this->updated_at);
+        return date('Y-m-d H:i:s', $this->updated_at);
+    }
+
     static function createArticles()
     {
         $libs = ['大', '小', '光', '树'];

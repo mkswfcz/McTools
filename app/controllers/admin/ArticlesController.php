@@ -38,9 +38,7 @@ class ArticlesController extends \BaseController
         $id = $this->request('id');
         $article = \Articles::findFirstById($id);
         debug('edit: ', $id, $article);
-        $this->view->content = $article->content;
-        $this->view->title = $article->title;
-        $this->view->id = $id;
+        $this->view->article = $article;
     }
 
     function updateAction()
@@ -67,6 +65,13 @@ class ArticlesController extends \BaseController
         $this->view->next_page = $current_page + 1;
         debug('page: ', $this->view->last_page, $this->view->next_page, $current_page);
         $this->view->articles = $articles;
+    }
+
+    function showAction()
+    {
+        $id = $this->request('id');
+        $article = \Articles::findFirstById($id);
+        $this->view->article = $article;
     }
 
     function testAction()
