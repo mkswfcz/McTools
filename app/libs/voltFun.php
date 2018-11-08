@@ -7,8 +7,9 @@ class voltFun
         $form = '';
         foreach ($elements as $element => $value) {
             if ($element == 'style') {
+                $form .= 'style=';
                 foreach ($value as $k => $v) {
-                    $form .= "style={$k}:{$v};";
+                    $form .= "{$k}:{$v};";
                 }
             } else {
                 $form .= " {$element}='{$value}' ";
@@ -114,19 +115,42 @@ class voltFun
         return $html;
     }
 
-    static function input($elements)
+    static function input($elements, $show_value = '')
     {
         $input = '';
         foreach ($elements as $element => $value) {
             if ($element == 'style') {
+                $input .= '=style';
                 foreach ($value as $k => $v) {
-                    $input .= "style={$k}:{$v};";
+                    $input .= "{$k}:{$v};";
                 }
             } else {
                 $input .= " {$element}='{$value}' ";
             }
         }
+        if ($show_value) {
+            $input .= ' value=' . $show_value . ' ';
+        }
+        debug('inp: ', $input);
         $input = "<input {$input}><br>";
+        return $input;
+    }
+
+    static function text($elements, $value = '')
+    {
+        $input = '';
+        foreach ($elements as $element => $value) {
+            if ($element == 'style') {
+                $input .= 'style=';
+                foreach ($value as $k => $v) {
+                    $input .= "{$k}:{$v};";
+                }
+            } else {
+                $input .= " {$element}='{$value}' ";
+            }
+        }
+        $input = "<textarea {$input}>";
+        debug('tex: ', $input);
         return $input;
     }
 

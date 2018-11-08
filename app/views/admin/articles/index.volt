@@ -8,5 +8,5 @@
 {#{{ modalFooter('保存') }}#}
 
 {{ modalTable(articles,['id':'序号','title':'标题','content':'内容','created_at_text':'创建','updated_at_text':'更新'],
-    ['操作':['edit':['/admin/articles/edit':['id','title']],'show':['/admin/articles/show':['id']]]]) }}
-<div><a href="/admin/articles/index?page={{ last_page }}">上一页</a> <a href="/admin/articles/index?page={{ next_page }}">下一页</a></div>
+    ['操作':['edit':['/admin/articles/edit':['id']],'show':['/admin/articles/show':['id']]]]) }}
+<div><a href="/admin/articles/index?page={{ last_page }}" style="float: left">上一页</a> <a href="/admin/articles/index?page={{ next_page }}" style="float: right">下一页</a></div>

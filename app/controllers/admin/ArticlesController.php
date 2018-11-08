@@ -37,21 +37,35 @@ class ArticlesController extends \BaseController
     {
         $id = $this->request('id');
         $article = \Articles::findFirstById($id);
+        debug('edit: ', $id, $article);
         $this->view->content = $article->content;
         $this->view->title = $article->title;
         $this->view->id = $id;
+    }
+
+    function updateAction()
+    {
+        $id = $this->request('id');
+        $title = $this->request('title');
+        $content = $this->request('content');
+        $article = \Articles::findFirstById($id);
+        $article->title = $title;
+        $article->content = $content;
+        $article->update();
+        $this->response->redirect('/admin/articles');
     }
 
     function indexAction()
     {
         $current_page = $this->request('page', 0);
         $per_page = $this->request('per_page', 10);
-        $conditions['offset'] = $current_page*$per_page;
+        $conditions['offset'] = $current_page * $per_page;
         $conditions['limit'] = $per_page;
+        $conditions['order'] = 'id asc';
         $articles = \Articles::find($conditions);
         $this->view->last_page = $current_page > 0 ? $current_page - 1 : $current_page;
         $this->view->next_page = $current_page + 1;
-        debug('page: ',$this->view->last_page, $this->view->next_page,$current_page);
+        debug('page: ', $this->view->last_page, $this->view->next_page, $current_page);
         $this->view->articles = $articles;
     }
 

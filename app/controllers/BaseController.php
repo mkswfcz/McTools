@@ -172,7 +172,9 @@ class BaseController extends Controller
         if (isset($_REQUEST[$key])) {
             if (in_array($key, ['username','password','title','content'])) {
                 $value = decode($_REQUEST[$key]);
-                debug('request: ',$_REQUEST[$key],$value);
+                if( false ==$value){
+                    return $_REQUEST[$key];
+                }
                 return $value;
             } else {
                 return $_REQUEST[$key];
