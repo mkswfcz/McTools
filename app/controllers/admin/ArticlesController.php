@@ -44,7 +44,14 @@ class ArticlesController extends \BaseController
 
     function indexAction()
     {
-        $articles = \Articles::find();
+        $current_page = $this->request('page', 0);
+        $per_page = $this->request('per_page', 10);
+        $conditions['offset'] = $current_page*$per_page;
+        $conditions['limit'] = $per_page;
+        $articles = \Articles::find($conditions);
+        $this->view->last_page = $current_page > 0 ? $current_page - 1 : $current_page;
+        $this->view->next_page = $current_page + 1;
+        debug('page: ',$this->view->last_page, $this->view->next_page,$current_page);
         $this->view->articles = $articles;
     }
 

@@ -170,7 +170,7 @@ class BaseController extends Controller
             return $_REQUEST;
         }
         if (isset($_REQUEST[$key])) {
-            if (!in_array($key, ['_uri'])) {
+            if (in_array($key, ['username','password','title','content'])) {
                 $value = decode($_REQUEST[$key]);
                 debug('request: ',$_REQUEST[$key],$value);
                 return $value;
