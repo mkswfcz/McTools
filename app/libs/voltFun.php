@@ -120,7 +120,7 @@ class voltFun
         $input = '';
         foreach ($elements as $element => $value) {
             if ($element == 'style') {
-                $input .= '=style';
+                $input .= 'style=';
                 foreach ($value as $k => $v) {
                     $input .= "{$k}:{$v};";
                 }
