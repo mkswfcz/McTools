@@ -135,7 +135,7 @@ class BaseController extends Controller
         return true;
     }
 
-    function respJson($error_code, string $error_reason, array $data = array())
+    function respJson($error_code, $error_reason, array $data = array())
     {
         $result['error_code'] = $error_code;
         $result['error_reason'] = $error_reason;

@@ -126,10 +126,28 @@ $(document).on('click', '#modal_submit', function (event) {
                 error_area.append(result.error_reason);
             } else {
                 var url = result.data.redirect_url;
-                console.log('url: '+url);
+                console.log('url: ' + url);
                 top.window.location.href = url;
             }
             return false;
+        }
+    });
+})
+
+$(document).on('click', '#ajax_send', function (event) {
+    event.preventDefault();
+    var address = document.getElementById('div_input').value;
+    var admin_id = document.getElementById('bind_mail_id').value;
+    var type = document.getElementById('bind_mail_type').value;
+    console.log(address + ' ' + admin_id + ' ' + type);
+    $.ajax({
+        async: false,
+        type: 'POST',
+        url: '/admin/administrators/sendMail',
+        data: {"address": address, "admin_id": admin_id, "type": type},
+        success: function (result) {
+            var result = JSON.parse(result);
+            alert(result.error_reason);
         }
     });
 })

@@ -27,8 +27,12 @@ class Mailer
             $mail->Port = 587;
             $mail->setFrom(sys('mail_username'), sys('mail_from'));
 
-            foreach ($to_addresses as $address) {
-                $mail->addAddress($address);
+            if (is_array($to_addresses)) {
+                foreach ($to_addresses as $address) {
+                    $mail->addAddress($address);
+                }
+            } else {
+                $mail->addAddress($to_addresses);
             }
             if (count($attachments) > 0) {
                 foreach ($attachments as $attachment) {

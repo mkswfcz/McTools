@@ -132,7 +132,7 @@ class voltFun
             $input .= ' value=' . $show_value . ' ';
         }
         debug('inp: ', $input);
-        $input = "<input {$input}><br>";
+        $input = "<input {$input}>";
         return $input;
     }
 

@@ -1,0 +1,1 @@
+alter TABLE administrators add COLUMN email VARCHAR(255);
