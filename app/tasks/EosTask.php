@@ -28,4 +28,9 @@ class EosTask extends Phalcon\Cli\Task
         echo $api->abiJsonToBin("eosio.token", "transfer", ["blockmatrix1", "blockmatrix1", "7.0000 EOS", "Testy McTest"]) . PHP_EOL;
         echo $api->abiBinToJson("eosio.token", "transfer", "10babbd94888683c10babbd94888683c701101000000000004454f53000000000c5465737479204d6354657374") . PHP_EOL;
     }
+
+    function transferAction()
+    {
+        #区块信息,签名参数,转化成二进制,发布到交易到主链
+    }
 }
