@@ -79,7 +79,7 @@ function info()
 
 function isNull($var)
 {
-    if(is_string($var)) {
+    if (is_string($var)) {
         $var = trim($var);
     }
     if (empty($var) || is_null($var)) {
@@ -120,10 +120,11 @@ function myDate($time = '', $format = 'Ymd')
 
 function post($uri, $headers = array(), $params = array())
 {
-    $response = \Httpful\Request::post($uri, $params, \Httpful\Mime::FORM)
-        ->addHeaders($headers)
-        ->autoParse()
-        ->send();
+    $request = \Httpful\Request::post($uri, $params, \Httpful\Mime::FORM);
+    $request->addHeaders($headers);
+    $request->body($params);
+    $request->autoParse();
+    $response = $request->send();
     $body = '';
     if (!$response->hasErrors()) {
         $body = $response->raw_body;

@@ -3,3 +3,4 @@ vendor/*
 *.xml
 logs/*
 app/cache/*
+app/libs/Mailer.php
