@@ -92,6 +92,12 @@ class TempTask extends Phalcon\Cli\Task
         $str = "hello world!";
 //        $str = "{\"hello\":\"world\"}";
         debug(json_decode($str, true));
+    }
 
+    function catchAction()
+    {
+        $query = \QL\QueryList::getInstance();
+        $data = $query->get('');
+        debug('da: ',$data);
     }
 }

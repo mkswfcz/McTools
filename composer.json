@@ -3,6 +3,7 @@
     "nategood/httpful": "*",
     "phpmailer/phpmailer": "~6.0",
     "aferrandini/phpqrcode": "1.0.1",
-    "block-matrix-network/php-eos-rpc-sdk":"dev-master"
+    "block-matrix-network/php-eos-rpc-sdk":"dev-master",
+    "jaeger/querylist":"V4.0.4"
   }
 }

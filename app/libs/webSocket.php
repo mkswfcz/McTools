@@ -33,6 +33,11 @@ class webSocket
         $this->server->start();
     }
 
+    function isConnect($server, $fd)
+    {
+        return $server->connection_info($fd);
+    }
+
     function onOpen(swoole_websocket_server $server, $request)
     {
         echoTip("ws server: handshake success with fd: {$request->fd}");
@@ -45,15 +50,15 @@ class webSocket
 
         $redis->sadd($chat_list, $fd);
         $redis->set($fd, $nick_name . '_' . $fd);
-        $server->push($fd, json_encode(['msg_type' => '系统消息', 'error_code' => 0, 'error_reason' => '申请成功']));
+        $server->push($fd, json_encode(['msg_type' => '系统消息', 'error_code' => 0, 'error_reason' => '申请成功,您的昵称:' . $nick_name]));
 
         $exists_users = $redis->smembers($chat_list);
-        debug('uids: ', $exists_users);
         if (count($exists_users) > 0) {
             foreach ($exists_users as $user_fd) {
-                debug($user_fd, $fd);
                 if ($user_fd != $fd) {
-                    $server->push($user_fd, json_encode(['msg_type' => '系统消息', 'error_reason' => "{$nick_name} 加入群聊!"]));
+                    if ($this->isConnect($server, $user_fd)) {
+                        $server->push($user_fd, json_encode(['msg_type' => '系统消息', 'error_reason' => "{$nick_name} 加入群聊!"]));
+                    }
                 }
             }
         }
@@ -64,17 +69,16 @@ class webSocket
         $redis = McRedis::getInstance(self::$redis_endpoint);
         $nick_name = $redis->get($fd);
         $u_fds = $redis->smembers('chat_user_list');
-        debug($u_fds);
         foreach ($u_fds as $u_fd) {
-            debug('fd: ', $fd, $content);
-            $server->push($u_fd, json_encode(['msg_type' => "{$nick_name}", 'error_reason' => "{$content}"]));
+            if ($this->isConnect($server, $u_fd)) {
+                $server->push($u_fd, json_encode(['msg_type' => "{$nick_name}", 'error_reason' => "{$content}"]));
+            }
         }
     }
 
     function handleChat($server, $fd, $data)
     {
         $new_data = json_decode($data, true);
-        debug($new_data['nick_name']);
         if ($new_data) {
             if (isset($new_data['nick_name'])) {
                 $this->apply($server, $fd, $new_data['nick_name']);
@@ -105,10 +109,15 @@ class webSocket
             $channel_key = self::getChannelKey($channel);
             $fds = $redis->zrange($channel_key, 0, -1);
             $info = $server->getClientList();
-            debug('info: ', $info);
+            if (false === $info) {
+                foreach ($fds as $fd) {
+                    $redis->zrem($channel_key, $fd);
+                }
+            }
             foreach ($fds as $fd) {
-                debug('fd: ', $fd);
-                $server->push($fd, json_encode($data));
+                if ($this->isConnect($server, $fd)) {
+                    $server->push($fd, json_encode($data));
+                }
             }
         });
 
@@ -158,11 +167,11 @@ class webSocket
         $redis->sadd('message_type_channel_list', $channel_key);
         $success_response = json_encode(['error_code' => 0, 'error_reason' => "{$data['operate']} {$data['message_type']} success"]);
         $fail_response = json_encode(['error_code' => -1, 'error_reason' => "{$data['operate']} {$data['message_type']} failed"]);
-        debug('operate: ', $data['operate']);
+        debug('operate: ', $data['operate'], $fd);
         if ('sub' == $data['operate']) {
             $result = $redis->zadd($channel_key, time(), $fd);
             debug('sub: ', $result);
-            if ($result) {
+            if ($result && $redis->z) {
                 $server->push($fd, $success_response);
             } else {
                 $server->push($fd, $fail_response);

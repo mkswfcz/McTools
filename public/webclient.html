@@ -4,13 +4,16 @@
     <meta http-equiv="content-type" content="text/html"/>
     <meta name="author" content="https://www.baidu.com"/>
     <meta charset="UTF-8">
+    <script src="js/jquery.min.js"></script>
     <title>webSocket</title>
     <style>
         #chat_interface {
             width: 500px;
-            height: 675px;
+            height: 680px;
             border: 1px solid;
             text-align: center;
+            margin-left: 500px;
+            background-color: whitesmoke;
             /*margin-left: 20px;*/
         }
 
@@ -20,6 +23,7 @@
             background-color: #bce8f1;
             border-width: 0px 1px 1px 1px;
             border-style: solid;
+            margin-left: 500px;
         }
 
         #close {
@@ -46,6 +50,11 @@
             width: 80px;
             text-align: center;
             height: 40px;
+        }
+
+        #init_div {
+            color: cornflowerblue;
+            text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0,0,0,0.1), 0 0 5px rgba(0,0,0,0.1),0 1px 3px rgba(0,0,0,0.3),0 3px 5px rgba(0,0,0,0.2),0 5px 10px rgba(0,0,0,0.25);
         }
     </style>
     <script>
@@ -100,8 +109,30 @@
             }
         }
 
+        function setNick() {
+            $.ajax({
+                async: false,
+                url: "http://api.sinchang.me/random/user",
+                type: "GET",
+                success: function (result) {
+                    var nick_name = result.items.name + result.items.email;
+                    var data = JSON.stringify({
+                        "operate": "sub",
+                        "nick_name": nick_name.toString()
+                    });
+                    console.log(data);
+                    socket.send(data);
+                }
+            });
+        }
+
+        function changeColor() {
+
+        }
+
         function Send() {
             if (socket) {
+                console.log('send' + document.getElementById("msg").value);
                 socket.send(document.getElementById("msg").value);
             } else {
                 alert("websocket disconnected!");
@@ -123,6 +154,9 @@
 
 </div>
 <div id="chat_interface">
+    <div id="init" style="background-color: whitesmoke;">
+        <div id="init_div" onclick="setNick()">Click To Start</div>
+    </div>
     <div style="text-align: center; border-bottom: 1px solid; background-color: #afd9ee"> 消息框</div>
     <div id="message" style="background-color: whitesmoke; margin-top: 10px;"></div>
 </div>
