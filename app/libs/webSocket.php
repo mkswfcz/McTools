@@ -55,10 +55,8 @@ class webSocket
         $exists_users = $redis->smembers($chat_list);
         if (count($exists_users) > 0) {
             foreach ($exists_users as $user_fd) {
-                if ($user_fd != $fd) {
-                    if ($this->isConnect($server, $user_fd)) {
-                        $server->push($user_fd, json_encode(['msg_type' => '系统消息', 'error_reason' => "{$nick_name} 加入群聊!"]));
-                    }
+                if ($user_fd != $fd && $this->isConnect($server, $user_fd)) {
+                    $server->push($user_fd, json_encode(['msg_type' => '系统消息', 'error_reason' => "{$nick_name} 加入群聊!"]));
                 }
             }
         }
