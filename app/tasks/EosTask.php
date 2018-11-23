@@ -46,7 +46,7 @@ class EosTask extends Phalcon\Cli\Task
         $block_detail = $api->getBlock($head_block_num);
 
         $details = json_decode($block_detail, true);
-        debug($block_detail);
+        debug('id:', json_decode($block_detail, true)['id']);
         echoTip(microtime());
     }
 
@@ -125,10 +125,48 @@ class EosTask extends Phalcon\Cli\Task
             ["EOS78makdvqpeJDdqtsxG7PXWDPp3fdvqZxAbfhzLqwGUZ9wecp1R"],
             $chain_id
         ];
-        $un_lock = $api->unlock('/get_required_keys',$args_a);
+        $un_lock = $api->unlock('/get_required_keys', $args_a);
 //        $result = $api->wallet('/get_required_keys', $args_a);
-        file_put_contents('/Users/apple/docker_eos/transaction.json',json_encode($args_b));
-        debug('unlock: ',$un_lock);
+        file_put_contents('/Users/apple/docker_eos/transaction.json', json_encode($args_b));
+        debug('unlock: ', $un_lock);
 //        debug('require_keys: ', $result);
+    }
+
+    function check($num, $limit)
+    {
+        if (intval($num) > $limit) {
+            $offset_first = intval($num[0]) + intval($num[1]);
+            return $offset_first;
+        }
+        return intval($num);
+    }
+
+    function randAction($params)
+    {
+        $api = self::getApi();
+        $block_info = json_decode($api->getInfo(), true);
+        $seed_block = $block_info['last_irreversible_block_id'];
+
+        $players = $params[0];
+        list($micro, $sec) = explode(' ', microtime());
+
+        $seq = bcmul($micro, pow(10, $players), 8);
+        $seq = str_replace(['.', '0'], '', $seq);
+
+        $first_offset = substr($seq, 0, 2);
+        $second_offset = substr($seq, 2, 2);
+
+        $seed_block_a = $seed_block[$this->check($first_offset, 64)];
+        $seed_ascii_a = ord($seed_block_a);
+        $seed_block_b = $seed_block[$this->check($second_offset, 64)];
+        $seed_ascii_b = ord($seed_block_b);
+
+        debug($seq, $players, $micro, $seed_block, strlen($seed_block));
+        debug($seed_block_a, '=>', $seed_ascii_a, $seed_block_b, '=>', $seed_ascii_b);
+
+        mt_srand($seed_ascii_a + $seed_ascii_b);
+        $rand_num = mt_rand(1, 100);
+
+        debug('rand: ', $rand_num,'种子: ' ,$seed_ascii_a, $seed_ascii_b);
     }
 }
