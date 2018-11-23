@@ -61,6 +61,11 @@ class ArticlesController extends \BaseController
         $conditions['limit'] = $per_page;
         $conditions['order'] = 'id asc';
         $articles = \Articles::find($conditions);
+        if (count($articles) < 1) {
+            $current_page = 0;
+            $conditions['offset'] = 0;
+            $articles = \Articles::find($conditions);
+        }
         $this->view->last_page = $current_page > 0 ? $current_page - 1 : $current_page;
         $this->view->next_page = $current_page + 1;
         debug('page: ', $this->view->last_page, $this->view->next_page, $current_page);

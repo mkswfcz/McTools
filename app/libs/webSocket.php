@@ -20,9 +20,9 @@ class webSocket
         self::$redis_endpoint = $cache->endpoint;
 
         $this->server->set([
-//            'daemonize' => 1,
+            'daemonize' => 1,
             'worker_num' => 1,
-//            'log_file' => APP_ROOT . '/logs/ws.log'
+            'log_file' => APP_ROOT . '/logs/ws.log'
         ]);
         $this->server->on('open', [$this, 'onOpen']);
         $this->server->on('message', [$this, 'onMessage']);
@@ -31,6 +31,11 @@ class webSocket
 
         echoTip("Server start: {$point}");
         $this->server->start();
+    }
+
+    function getUserList()
+    {
+
     }
 
     function isConnect($server, $fd)

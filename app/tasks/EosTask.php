@@ -39,6 +39,7 @@ class EosTask extends Phalcon\Cli\Task
     function transferAction()
     {
         #区块信息,签名参数,转化成二进制,发布到交易到主链
+        echoTip(microtime());
         $api = self::getApi();
         $block_info = json_decode($api->getInfo(), true);
         $head_block_num = $block_info['head_block_num'];
@@ -46,6 +47,7 @@ class EosTask extends Phalcon\Cli\Task
 
         $details = json_decode($block_detail, true);
         debug($block_detail);
+        echoTip(microtime());
     }
 
     function newAccountAction()
