@@ -19,24 +19,30 @@ class McRedis
             $this->_cache = new Redis();
             $this->_cache->connect($host, $port, $timeout);
         }
+        if ('ssdb' == $type) {
+            $this->_type = $type;
+            $this->_cache = new SSDB($host, $port, $timeout);
+        }
     }
 
     #127.0.0.1:6379
-    static function getInstance($endpoint)
+    static function getInstance($point)
     {
-        if (!isset(self::$_map[$endpoint])) {
+        if (!isset(self::$_map[$point])) {
+            list($type,$endpoint) = explode('//',$point);
+            debug($point,$type,$endpoint);
             list($host, $port) = explode(':', $endpoint);
-            $redis = new self($host, $port);
+            $redis = new self($host, $port,5,$type);
             self::$_map[$endpoint] = $redis;
             return $redis;
         }
-        return self::$_map[$endpoint];
+        return self::$_map[$point];
     }
 
     function __call($name, $arguments)
     {
         #... 将数组和可遍历对象展开为函数参数
-        return call_user_func([$this->_cache,$name ], ...$arguments);
+        return call_user_func([$this->_cache, $name], ...$arguments);
     }
 
     function lock($source, $ttl = 10)

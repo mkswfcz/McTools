@@ -112,6 +112,13 @@ class BaseModel extends Model
         return McRedis::getInstance($redis->endpoint);
     }
 
+    static function getSsdb()
+    {
+        $ssdb = getConfig('cache')->ssdb;
+        debug($ssdb);
+        return McRedis::getInstance($ssdb->endpoint);
+    }
+
     static function findLast($conditions = array())
     {
         if (empty($conditions)) {

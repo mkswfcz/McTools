@@ -29,7 +29,10 @@ return new Phalcon\Config([
     ],
     'cache' => [
         'redis' => [
-            'endpoint' => '127.0.0.1:6379'
+            'endpoint' => 'redis//127.0.0.1:6379',
+        ],
+        'ssdb' => [
+            'endpoint' => 'ssdb//127.0.0.1:8888'
         ],
         'ws_redis' => ['endpoint' => '127.0.0.1:6389']
     ],

@@ -185,7 +185,7 @@ foreach ($dirs as $key => $dir) {
     $files_stream = scandir($dir);
     foreach ($files_stream as $file) {
         $extension = pathinfo($file, PATHINFO_EXTENSION);
-        if ($file != 'services.php' && $file != 'defined.php' && $extension == 'php' && $extension != 'ini') {
+        if (!in_array( $file,['services.php']) && $file != 'defined.php' && $extension == 'php' && $extension != 'ini') {
             $source_file = $dir . $file;
             require "{$source_file}";
         }

@@ -98,6 +98,14 @@ class TempTask extends Phalcon\Cli\Task
     {
         $query = \QL\QueryList::getInstance();
         $data = $query->get('');
-        debug('da: ',$data);
+        debug('da: ', $data);
+    }
+
+    function ssdbAction()
+    {
+        $ssdb = Articles::getSsdb();
+        $ssdb->set('a','ssdb//127.0.0.1:8888');
+        $result = $ssdb->get('a');
+        debug($result);
     }
 }
