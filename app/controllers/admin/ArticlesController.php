@@ -66,6 +66,7 @@ class ArticlesController extends \BaseController
             $conditions['offset'] = 0;
             $articles = \Articles::find($conditions);
         }
+        debug($this->getReqIp());
         $this->view->last_page = $current_page > 0 ? $current_page - 1 : $current_page;
         $this->view->next_page = $current_page + 1;
         debug('page: ', $this->view->last_page, $this->view->next_page, $current_page);

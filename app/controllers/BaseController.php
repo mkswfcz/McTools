@@ -22,6 +22,17 @@ class BaseController extends Controller
         return [$namespace, $controller, $action];
     }
 
+    function getReqIp()
+    {
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        if (isset($_SERVER['REMOTE_ADDR'])) {
+            return $_SERVER['REMOTE_ADDR'];
+        }
+        return null;
+    }
+
     function loadRemoteSource()
     {
         $remote_static = getConfig('remote_static');
@@ -170,9 +181,9 @@ class BaseController extends Controller
             return $_REQUEST;
         }
         if (isset($_REQUEST[$key])) {
-            if (in_array($key, ['username','password','title','content'])) {
+            if (in_array($key, ['username', 'password', 'title', 'content'])) {
                 $value = decode($_REQUEST[$key]);
-                if( false ==$value){
+                if (false == $value) {
                     return $_REQUEST[$key];
                 }
                 return $value;
