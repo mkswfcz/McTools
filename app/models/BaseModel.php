@@ -115,7 +115,6 @@ class BaseModel extends Model
     static function getSsdb()
     {
         $ssdb = getConfig('cache')->ssdb;
-        debug($ssdb);
         return McRedis::getInstance($ssdb->endpoint);
     }
 

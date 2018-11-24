@@ -30,10 +30,11 @@ class McRedis
     {
         if (!isset(self::$_map[$point])) {
             list($type,$endpoint) = explode('//',$point);
-            debug($point,$type,$endpoint);
             list($host, $port) = explode(':', $endpoint);
+
             $redis = new self($host, $port,5,$type);
             self::$_map[$endpoint] = $redis;
+
             return $redis;
         }
         return self::$_map[$point];
