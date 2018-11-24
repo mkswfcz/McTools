@@ -104,13 +104,26 @@ class TempTask extends Phalcon\Cli\Task
     function ssdbAction()
     {
         $ssdb = Articles::getSsdb();
-        $ssdb->set('a','ssdb//127.0.0.1:8888');
+        $ssdb->set('a', 'ssdb//127.0.0.1:8888');
         $result = $ssdb->get('a');
-        $ssdb->zset('test_a','key_a',1);
-        $ssdb->zset('test_a','key_b',2);
-        $result = $ssdb->zget('test_a','key_a');
-        $result = $ssdb->zlist('','',100);
-        debug($result);
+        $ssdb->zset('test_a', 'key_a', 1);
+        $ssdb->zset('test_a', 'key_b', 2);
+        $result = $ssdb->zget('test_a', 'key_a');
+        $result = $ssdb->zlist('', '', 100);
 
+        $lock = 'test_lock';
+        $set = $ssdb->set($lock, time() + 5);
+        $expire = $ssdb->expire($lock, 20);
+
+        $exist = $ssdb->exists($lock);
+
+        debug($set, $exist);
+//        sleep(5);
+//        debug($ssdb->exists($lock));
+
+        $redis = Articles::getRedis();
+//        $lock = $redis->lock('hello',20);
+        debug($lock);
+        $redis->unlock($lock);
     }
 }
