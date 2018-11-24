@@ -106,6 +106,11 @@ class TempTask extends Phalcon\Cli\Task
         $ssdb = Articles::getSsdb();
         $ssdb->set('a','ssdb//127.0.0.1:8888');
         $result = $ssdb->get('a');
+        $ssdb->zset('test_a','key_a',1);
+        $ssdb->zset('test_a','key_b',2);
+        $result = $ssdb->zget('test_a','key_a');
+        $result = $ssdb->zlist('','',100);
         debug($result);
+
     }
 }
