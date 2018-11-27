@@ -29,9 +29,14 @@ class McRedis
     static function getInstance($point)
     {
         if (!isset(self::$_map[$point])) {
-            list($type, $endpoint) = explode('//', $point);
-            list($host, $port) = explode(':', $endpoint);
+            $type = 'redis';
+            if (!strpos($point, '//')) {
+                $endpoint = $point;
+            } else {
+                list($type, $endpoint) = explode('//', $point);
+            }
 
+            list($host, $port) = explode(':', $endpoint);
             $redis = new self($host, $port, 5, $type);
             self::$_map[$endpoint] = $redis;
 
@@ -59,27 +64,32 @@ class McRedis
     function lock($source, $ttl = 10)
     {
         $lock = 'cache_lock_' . $source;
+        $loop = 0;
+
+        $start = time();
         while (true) {
-            $result = $set = $expire = false;
+            $result = false;
+
             if ($this->isRedis()) {
+                debug('real_lock: ', $lock);
                 $result = $this->set($lock, time() + $ttl, ['nx', 'ex' => $ttl]);
             } elseif ($this->isSsdb()) {
                 return false;
-//                if (!$this->exists($lock)) {
-//                    $set = $this->set($lock, time() + $ttl);
-//                    $expire = $this->expire($lock, $ttl);
-//                    debug($lock, $set, $expire);
-//                }
-            } else {
-                return false;
             }
 
+            $loop += 1;
             if (!$result) {
                 usleep(10);
+                debug('loop: ', $loop);
+                if (time() > $start + 2) {
+                    $this->expire($lock, 10);
+                    return false;
+                }
             } else {
                 break;
             }
         }
+
         return $lock;
     }
 
