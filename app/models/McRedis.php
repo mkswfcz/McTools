@@ -17,7 +17,12 @@ class McRedis
         if ('redis' == $type) {
             $this->_type = $type;
             $this->_cache = new Redis();
-            $this->_cache->connect($host, $port, $timeout);
+            try {
+                debug($host, $port);
+                $this->_cache->connect($host, $port, $timeout);
+            } catch (Exception $e) {
+                echoTip($e->getMessage());
+            }
         }
         if ('ssdb' == $type) {
             $this->_type = $type;
@@ -38,7 +43,7 @@ class McRedis
 
             list($host, $port) = explode(':', $endpoint);
             $redis = new self($host, $port, 5, $type);
-            self::$_map[$endpoint] = $redis;
+            self::$_map[$point] = $redis;
 
             return $redis;
         }
