@@ -76,8 +76,11 @@ function parseUri($uri)
     if ($action_key == 'index') {
         $action = 'index';
     }
+    debug('controller: ',$controller);
     if (empty($namespace)) {
-        $namespace = 'front';
+        if (!class_exists($controller.'Controller')) {
+            $namespace = 'front';
+        }
         if ($controller == 'admin') {
             $namespace = 'admin';
             $controller = $default_page->admin->controller;

@@ -65,9 +65,9 @@ class BaseController extends Controller
     function setStaticFiles($namespace, $controller, $action, $file_type = 'css')
     {
         $method = 'add' . ucwords($file_type);
-        if (!$namespace) {
-            return false;
-        }
+//        if (!$namespace) {
+//            return false;
+//        }
         $static_root = $file_type . '/' . $namespace . '/';
         $extension = '.' . $file_type;
 
@@ -75,7 +75,13 @@ class BaseController extends Controller
         $static_files[] = $static_root . $namespace . $extension;
         $static_files[] = $static_root . $controller . '/' . $controller . $extension;
         $static_files[] = $static_root . $controller . '/' . $action . $extension;
-        $controller_static_dir = realpath(APP_ROOT . '/public/' . $file_type . '/' . $namespace . '/' . $controller);
+
+        $dir = APP_ROOT . '/public/' . $file_type . '/' . $namespace . '/' . $controller;
+        if (empty($namespace)) {
+            $dir = APP_ROOT . '/public/' . $file_type . '/' . $controller;
+        }
+        $controller_static_dir = realpath($dir);
+        debug('dir: ',$namespace,$controller,$action);
         if (is_dir($controller_static_dir)) {
             $files = glob($controller_static_dir . '/*.' . $file_type);
             foreach ($files as $item) {
@@ -86,6 +92,7 @@ class BaseController extends Controller
         }
 
         foreach ($static_files as $file) {
+            $file = str_replace('//','/',$file);
             if (file_exists($file)) {
                 $this->assets->$method($file);
                 debug('load static: ', $file);
