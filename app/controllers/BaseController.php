@@ -61,7 +61,7 @@ class BaseController extends Controller
         $this->assets->collection('footer')->addJs('js/mc.js');
     }
 
-    #动态加载静态文件
+    #动态加载静态文件 代优化
     function setStaticFiles($namespace, $controller, $action, $file_type = 'css')
     {
         $method = 'add' . ucwords($file_type);
