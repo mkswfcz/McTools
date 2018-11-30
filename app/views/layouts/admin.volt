@@ -12,7 +12,11 @@
 <body style="background-color: whitesmoke">
 <div class="card">
     {% if default != true %}
-        {{ dirLink(['AMark':['Login':'/admin/administrators','Mail':'/admin/administrators/bindMail','ajax_link_Logout':'myModal'],'Articles':['文章':'/admin/articles/index']]) }}
+        {{ dirLink([
+            'AMark':['Login':'/admin/administrators','Mail':'/admin/administrators/bindMail','ajax_link_Logout':'myModal'],
+            'Articles':['文章':'/admin/articles/index'],
+            'TalkBox':['聊天':'webclient.html']
+        ]) }}
     {% endif %}
 </div>
 <div class="mc_admin_content">
