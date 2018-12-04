@@ -178,11 +178,21 @@ class EosTask extends Phalcon\Cli\Task
 
     function randOrgAction()
     {
-        $result = get('https://www.random.org/integers/', ['num' => 6, 'min' => 1, 'max' => 100, 'col' => 6, 'base' => 10, 'format' => 'plain', 'rnd' => time()]);
+        $result = get('https://www.random.org/integers/', ['num' => 6, 'min' => 1, 'max' => 100, 'col' => 6, 'base' => 10, 'format' => 'plain', 'rnd' => 1]);
         $data = $result['body'];
 
         $data = preg_replace("/[\s]+/is", " ", $data);
         $rand_num = array_filter(explode(' ', $data));
         debug($rand_num);
+    }
+
+    #比例控制赔率
+    function payoutAction($params)
+    {
+        $prediction = getValue(0, $params);
+        $bounce = getValue(1, $params);
+        $win_rate = ((101 - $prediction) / ($prediction - 1) + 1) * 0.985;
+        $pay_amount = $bounce * ($win_rate - 1);
+        debug('投注资金bounce: ', $bounce, '赢得奖金比例win_rate: ', $win_rate - 1, '赢取win_amount: ', $pay_amount, '返还金额: ', $bounce + $pay_amount);
     }
 }
