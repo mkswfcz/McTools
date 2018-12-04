@@ -81,7 +81,7 @@ class BaseController extends Controller
             $dir = APP_ROOT . '/public/' . $file_type . '/' . $controller;
         }
         $controller_static_dir = realpath($dir);
-        debug('dir: ',$namespace,$controller,$action);
+        debug('dir: ', $namespace, $controller, $action);
         if (is_dir($controller_static_dir)) {
             $files = glob($controller_static_dir . '/*.' . $file_type);
             foreach ($files as $item) {
@@ -92,7 +92,7 @@ class BaseController extends Controller
         }
 
         foreach ($static_files as $file) {
-            $file = str_replace('//','/',$file);
+            $file = str_replace('//', '/', $file);
             if (file_exists($file)) {
                 $this->assets->$method($file);
                 debug('load static: ', $file);
@@ -127,11 +127,10 @@ class BaseController extends Controller
     function beforeExecuteRoute($dispatcher)
     {
         list($namespace, $controller, $action) = $this->parseDispatcher($dispatcher);
-        if (!$this->request('role')) {
-            $role = 'root';
-        } else {
-            $role = $this->request('role');
-        }
+
+        $default_role = getConfig('role_default');
+        $role = $this->request('role', $namespace);
+        $role = $role ? $role : $default_role;
         if (!$this->isAllowed($role, $controller, $action)) {
             return $this->respJson(0, 'access not allowed', ['role' => $role]);
         }
