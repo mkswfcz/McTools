@@ -167,6 +167,22 @@ class EosTask extends Phalcon\Cli\Task
         mt_srand($seed_ascii_a + $seed_ascii_b);
         $rand_num = mt_rand(1, 100);
 
-        debug('rand: ', $rand_num,'种子: ' ,$seed_ascii_a, $seed_ascii_b);
+        debug('rand: ', $rand_num, '种子: ', $seed_ascii_a, $seed_ascii_b);
+    }
+
+    function eAction()
+    {
+        $api = self::getApi();
+        echo $api->getAccount('yuntaocao123') . PHP_EOL;
+    }
+
+    function randOrgAction()
+    {
+        $result = get('https://www.random.org/integers/', ['num' => 6, 'min' => 1, 'max' => 100, 'col' => 6, 'base' => 10, 'format' => 'plain', 'rnd' => time()]);
+        $data = $result['body'];
+
+        $data = preg_replace("/[\s]+/is", " ", $data);
+        $rand_num = array_filter(explode(' ', $data));
+        debug($rand_num);
     }
 }

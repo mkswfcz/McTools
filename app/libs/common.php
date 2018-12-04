@@ -139,13 +139,24 @@ function post($uri, $headers = array(), $params = array())
 
 function get($uri, $params = array(), $headers = array())
 {
-    if (isNull($params)) {
+    if (!strpos($uri, '?')) {
+        $uri .= '?';
+    }
+
+    if (isNull($headers)) {
         $headers['Content-Type'] = [\Httpful\Mime::FORM];
     }
-    $response = \Httpful\Request::get($uri)
-        ->timeoutIn(10)
-        ->autoParse()
-        ->send();
+
+    if (!isNull($params)) {
+        foreach ($params as $k => $v) {
+            $uri .= '&' . $k . '=' . urlencode($v);
+        }
+    }
+
+    $uri = str_replace('?&', '?', $uri);
+    $request = \Httpful\Request::get($uri, null)->timeoutIn(10);
+
+    $response = $request->withoutAutoParsing()->send();
     $header = $response->headers;
     $body = $response->raw_body;
     return [
