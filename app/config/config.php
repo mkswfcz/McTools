@@ -11,6 +11,7 @@ return new Phalcon\Config([
         'config' => APP_ROOT . '/app/config/',
         'libs' => APP_ROOT . '/app/libs/'
     ],
+
     'database' => [
         'adapter' => 'PostgresSQL',
         'host' => 'localhost',
@@ -19,6 +20,7 @@ return new Phalcon\Config([
         'port' => 5432,
         'dbname' => 'mc_tools'
     ],
+
     'logger' => [
         'line' => [
             'format' => '[PID ' . posix_getpid() . ' %date%][%type%] %message%',
@@ -27,6 +29,7 @@ return new Phalcon\Config([
         'dir' => APP_ROOT . '/logs/',
         'file' => 'main.log'
     ],
+
     'cache' => [
         'redis' => [
             'endpoint' => 'redis//127.0.0.1:6379',
@@ -36,9 +39,11 @@ return new Phalcon\Config([
         ],
         'ws_redis' => ['endpoint' => '127.0.0.1:6389']
     ],
+
     'css' => [
         'bootstrap.min.css'
     ],
+
     'js' => [
         'jquery.min.js',
         'bootstrap.min.js',
@@ -46,6 +51,7 @@ return new Phalcon\Config([
         'crypto-js.js',
         'jquery.form.js'
     ],
+
     'default_page' => [
         'admin' => [
             'controller' => 'administrators',
@@ -56,5 +62,8 @@ return new Phalcon\Config([
             'action' => 'index'
         ]
     ],
-    'async' => ['default' => 10]
+
+    'async' => ['default' => 10],
+
+    'role_default' => 'root'
 ]);
