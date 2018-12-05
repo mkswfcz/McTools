@@ -359,3 +359,74 @@ function qr($text, $outfile, $infile = '', $level = 'M', $size = 4, $margin = 3)
     }
     return $QR;
 }
+
+//multi http get
+function multiCurlGet($urls = array(), $body = array(), $headers = array())
+{
+    //multi_init
+    $multi_ch = curl_multi_init();
+    $ch_list = [];
+    $exec_result = [];
+    $errors = [];
+    //urlencode
+    foreach ($urls as $k => $url) {
+        $offset = strlen($url) - 2;
+        if (!strpos($url, '?', $offset)) {
+            $url .= '?';
+        }
+
+        if (isset($body[$k])) {
+            foreach ($body[$k] as $key => $value) {
+                $url .= '&' . $key . '=' . $value;
+            }
+        }
+
+        $url = str_replace('?&', '?', $url);
+        $ch = curl_init($url);
+        $ch_list[] = $ch;
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        if (0 === stripos($url, 'https')) {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        }
+        curl_multi_add_handle($multi_ch, $ch);
+    }
+
+    do {
+        while (($exec_run = curl_multi_exec($multi_ch, $running)) == CURLM_CALL_MULTI_PERFORM) ;//繁忙
+
+        if ($exec_run != CURLM_OK) { //资源可用
+            break;
+        }
+
+        //批量处理
+        while ($done = curl_multi_info_read($multi_ch)) {
+            $info = curl_getinfo($done['handle']);
+            $out_put = curl_multi_getcontent($done['handle']);
+            $error = curl_error($done['handle']);
+            if ($error) {
+                $errors['url'] = $info['url'];
+                $errors['error'] = $error;
+            }
+            $exec_result[] = $out_put;
+            curl_multi_remove_handle($multi_ch, $done['handle']);
+        }
+
+        if ($running) {//操作是否仍在执行
+            $rel = curl_multi_select($multi_ch, 1);
+            if (-1 == $rel) {
+                usleep(1000);
+            }
+        } else {
+            break;
+        }
+
+    } while (true);
+
+    //multi_close
+    curl_multi_close($multi_ch);
+    if (!empty($errors)) {
+        return [-1, $errors];
+    }
+    return [0, $exec_result];
+}

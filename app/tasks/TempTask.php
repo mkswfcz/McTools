@@ -126,4 +126,40 @@ class TempTask extends Phalcon\Cli\Task
         debug($lock);
         $redis->unlock($lock);
     }
+
+    function curlMAction()
+    {
+        $urls = ['a' => 'https://www.random.org/integers/', 'b' => 'https://www.random.org/integers/', 'c' => 'https://www.random.org/integers/'];
+        $body = ['a' => ['num' => 6, 'min' => 1, 'max' => 100, 'col' => 6, 'base' => 10, 'format' => 'plain', 'rnd' => 1],
+            'b' => ['num' => 6, 'min' => 1, 'max' => 100, 'col' => 6, 'base' => 10, 'format' => 'plain', 'rnd' => 2],
+            'c' => ['num' => 6, 'min' => 1, 'max' => 100, 'col' => 6, 'base' => 10, 'format' => 'plain', 'rnd' => 1]];
+
+        $start = microtime(true);
+        list($error_code, $results) = multiCurlGet($urls, $body);
+        $end = microtime(true);
+        $used_time = $end - $start;
+        $numbers = [];
+        foreach ($results as $result) {
+            $data = preg_replace("/[\s]+/is", " ", $result);
+            $rand_num = array_filter(explode(' ', $data));
+            $numbers[] = $rand_num;
+        }
+        debug('multi: ', $numbers, $used_time);
+
+        $ergodic = [];
+        $start = microtime(true);
+        foreach ($urls as $k => $url) {
+            $res = get($url, $body[$k]);
+            $data = $res['body'];
+
+            $data = preg_replace("/[\s]+/is", " ", $data);
+            $rand_num = array_filter(explode(' ', $data));
+            $ergodic[] = $rand_num;
+        }
+        $end = microtime(true);
+        $used_time = $end - $start;
+
+        debug('ergodic: ', $ergodic, $used_time);
+
+    }
 }
