@@ -430,3 +430,13 @@ function multiCurlGet($urls = array(), $body = array(), $headers = array())
     }
     return [0, $exec_result];
 }
+
+function ts()
+{
+    return microtime(true);
+}
+
+function period($left, $right)
+{
+    return bcsub($left, $right, 4);
+}
