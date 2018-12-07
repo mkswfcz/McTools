@@ -440,3 +440,16 @@ function period($left, $right)
 {
     return bcsub($left, $right, 4);
 }
+
+function calStore($params)
+{
+    $per_month_get = getValue('per_get', $params);
+    $per_month_used = getValue('per_used', $params);
+    $year = getValue('years', $params);
+
+    $per_month_surplus = $per_month_get - $per_month_used;
+    $year_store = bcmul($per_month_surplus, 14, 4);
+
+    $all_store = bcmul($year_store, $year);
+    debug("{$year} year remainder: {$all_store} ,per_year: {$year_store}");
+}

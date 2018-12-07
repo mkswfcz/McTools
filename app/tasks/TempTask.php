@@ -162,4 +162,10 @@ class TempTask extends Phalcon\Cli\Task
         debug('ergodic: ', $ergodic, $used_time);
 
     }
+
+    function calAction()
+    {
+        calStore(['per_get'=>8000,'per_used'=>3000,'years'=>3]);
+    }
+
 }
