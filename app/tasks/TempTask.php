@@ -189,6 +189,6 @@ class TempTask extends Phalcon\Cli\Task
         $set = $table->set('1',['id'=>1,'name'=>'test1','num'=>6.5]);
         $get = $table->get('1');
         $count = $table->count();
-        debug('res: ', $result,$set,$get,$count);
+        debug('res: ', $result,$set,$get,$count,$table->getMemorySize());
     }
 }

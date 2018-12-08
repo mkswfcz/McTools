@@ -38,7 +38,7 @@ class SwooleTable
 
     function getMemorySize()
     {
-        return $this->cache_table->momorySize;
+        return $this->cache_table->memorySize;
     }
 
     function __call($name, $arguments)
@@ -48,7 +48,6 @@ class SwooleTable
                 $result = call_user_func([$this->cache_table, $name]);
                 break;
             default:
-                debug('memory: ',$this->cache_table->memorySize);
                 $result = call_user_func([$this->cache_table, $name], ...$arguments);
                 break;
         }
