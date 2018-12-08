@@ -168,7 +168,7 @@ class TempTask extends Phalcon\Cli\Task
         calStore(['per_get' => 8000, 'per_used' => 3000, 'years' => 3]);
         $articles = Articles::find();
         foreach ($articles as $article) {
-            $article->administrator_id = mt_rand(1,12);
+            $article->administrator_id = mt_rand(1, 12);
             $article->save();
         }
     }
@@ -177,5 +177,18 @@ class TempTask extends Phalcon\Cli\Task
     {
         $article = Articles::findLast();
         debug($article->administrator->username);
+    }
+
+    function tableAction()
+    {
+        $table = SwooleTable::getInstance();
+        $table->column('id', Swoole\Table::TYPE_INT, 4);
+        $table->column('name', Swoole\Table::TYPE_STRING, 64);
+        $table->column('num', Swoole\Table::TYPE_FLOAT);
+        $result = $table->create();
+        $set = $table->set('1',['id'=>1,'name'=>'test1','num'=>6.5]);
+        $get = $table->get('1');
+        $count = $table->count();
+        debug('res: ', $result,$set,$get,$count);
     }
 }

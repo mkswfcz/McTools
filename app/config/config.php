@@ -65,5 +65,7 @@ return new Phalcon\Config([
 
     'async' => ['default' => 10],
 
-    'role_default' => 'root'
+    'role_default' => 'root',
+    #2N次方
+    'swoole_table_row' => 65536
 ]);
