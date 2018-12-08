@@ -165,7 +165,17 @@ class TempTask extends Phalcon\Cli\Task
 
     function calAction()
     {
-        calStore(['per_get'=>8000,'per_used'=>3000,'years'=>3]);
+        calStore(['per_get' => 8000, 'per_used' => 3000, 'years' => 3]);
+        $articles = Articles::find();
+        foreach ($articles as $article) {
+            $article->administrator_id = mt_rand(1,12);
+            $article->save();
+        }
     }
 
+    function getAction()
+    {
+        $article = Articles::findLast();
+        debug($article->administrator->username);
+    }
 }

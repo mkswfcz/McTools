@@ -20,6 +20,35 @@ class BaseModel extends Model
         return 'mc_tools';
     }
 
+    function isBindModel($property)
+    {
+        return property_exists($this, $property);
+    }
+
+    function __get($name)
+    {
+        $camel_name = Phalcon\Text::camelize($name);
+        $get_method = 'get' . $camel_name;
+        if (method_exists($this, $get_method)) {
+            return $this->$get_method();
+        }
+        #bind id to reset obj property
+        $model_id = $name . '_id';
+        if ($this->isBindModel($model_id)) {
+            if (class_exists($camel_name . 's')) {
+                $clazz = $camel_name . 's';
+            }
+            if (class_exists($camel_name . 'es')) {
+                $clazz = $camel_name . 'es';
+            }
+            $model = $clazz::findFirstById($this->$model_id);
+            $this->$name = $model;
+            return $this->$name;
+        }
+
+    }
+
+
     function toJson()
     {
         $columns = $this->getColumns();
