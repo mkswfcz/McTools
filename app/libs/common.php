@@ -14,15 +14,13 @@ function clog($content, $log_type, $location = '')
     if (is_array($content)) {
         if (!isNumericArray($content)) {
             foreach ($content as $key => $value) {
-                $log_text .= is_string($value) ? $key . '=>' . $value . ' ' : json_encode($key) . '=>' . json_encode($value) . '  ';
+                $log_text .= is_string($value) ? $key . '=>' . $value . ' ' : json_encode($key) . '=>' . json_encode($value, JSON_UNESCAPED_UNICODE) . '  ';
             }
         } else {
-            foreach ($content as $value) {
-                $log_text .= is_string($value) ? ' ' . $value . ' ' : json_encode($value) . ' ';
-            }
+            $log_text = json_encode($content, JSON_UNESCAPED_UNICODE);
         }
     } elseif (is_object($content)) {
-        $log_text = json_encode($content);
+        $log_text = json_encode($content, JSON_UNESCAPED_UNICODE);
     } else {
         $log_text = $content;
     }
@@ -120,6 +118,9 @@ function myDate($time = '', $format = 'Ymd')
 
 function post($uri, $headers = array(), $params = array())
 {
+    if (!isset($headers['User-Agent'])) {
+        $headers['User-Agent'] = 'Mozilla/5.0';
+    }
     $request = \Httpful\Request::post($uri, $params, \Httpful\Mime::FORM);
     $request->addHeaders($headers);
     $request->body($params);
