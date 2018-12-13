@@ -234,7 +234,6 @@ class voltFun
     {
         $text_method = lcfirst(camelize($property)) . 'Text';
         if (method_exists($object, $text_method)) {
-            debug('text: ', $text_method);
             return $object->$text_method();
         }
         return false;
@@ -243,7 +242,6 @@ class voltFun
     static function textReplace($stack, $needle)
     {
         if (strpos($stack, $needle)) {
-            debug('key: ', $stack, $needle);
             return str_replace($needle, '', $stack);
         }
         return $stack;
@@ -274,51 +272,83 @@ class voltFun
         return $href;
     }
 
+    static function th($text)
+    {
+        return "<th id='modal_th'scope='col'>{$text}</th>";
+    }
+
+    static function td($value)
+    {
+        return "<td id='modal_td'>{$value}</td>";
+    }
+
+    static function setTableTitle($table_head, $objects, $show_properties)
+    {
+        $object = $objects[0];
+        $vars = get_object_vars($object);
+
+        foreach ($show_properties as $property => $show_word) {
+            $real_key = self::textReplace($property, '_text');
+            if (in_array($real_key, array_keys($vars))) {
+                $table_head .= self::th($show_word);
+            }
+        }
+        return $table_head;
+    }
+
+    static function setTableLinks($table, $row_links)
+    {
+        $link_titles = array_keys($row_links);
+        foreach ($link_titles as $title) {
+            $table .= self::th($title);
+        }
+        $table .= "</tr></thead><tbody><tr>";
+        return $table;
+    }
+
+    static function setTableTd($table, $object, $properties)
+    {
+        $vars = get_object_vars($object);
+        foreach ($properties as $property => $show_word) {
+            $real_property = self::textReplace($property, '_text');
+            $real_value = $vars[$real_property];
+            if (!property_exists($object, $real_property)) {
+                $get_method = 'get' . ucwords($real_property);
+                $get_method = lcfirst(camelize($get_method));
+                if (method_exists($object, $get_method)) {
+                    $real_value = $object->$get_method();
+                }
+            }
+            if (strpos($property, '_text')) {
+                $result = self::getText($object, $property);
+                $real_value = $result ? $result : date('Y-m-d H:i:s', $real_value);
+            }
+
+            $table .= self::td($real_value);
+        }
+        return $table;
+    }
+
     static function modalTable($objects, $properties, $row_links = array())
     {
         $table = "<table id='modal_table' class='table table-striped table-hover'>";
         $table .= "<thead> <tr>";
-        $i = 1;
-        $link_titles = array_keys($row_links);
+        $table .= self::setTableTitle($table, $objects, $properties);
+        $table = self::setTableLinks($table, $row_links);
 
-        foreach ($objects as $key => $object) {
-            $vars = get_object_vars($object);
+        foreach ($objects as $object) {
 
-            if (1 === $i) {
-                $keys = array_keys($vars);
-                foreach ($properties as $k => $v) {
-                    $temp_key = self::textReplace($k, '_text');
-                    if (in_array($temp_key, $keys)) {
-                        $table .= "<th id='modal_th'scope='col'>{$properties[$k]}</th>";
-                    }
-                }
-                if (count($row_links) > 0) {
-                    foreach ($link_titles as $title) {
-                        $table .= "<th id='modal_th'scope='col'>{$title}</th>";
-                    }
-                }
-                $table .= "</tr></thead><tbody>";
-            }
-
-            $table .= "<tr>";
-
-            foreach ($vars as $key => $value) {
-                if (isset($properties[$key . '_text'])) {
-                    #todo 若存在propertyText 则调用该方法
-                    $result = self::getText($object, $key);
-                    $value = $result ? $result : date('Y-m-d H:i:s', $value);
-                }
-                $table .= "<td id='modal_td'>{$value}</td>";
-            }
+            $table = self::setTableTd($table, $object, $properties);
             if (count($row_links) > 0) {
+
                 foreach ($row_links as $title => $links) {
                     $result = self::parseHref($links);
                     $real_link = self::buildHref($result, $object);
-                    $table .= "<td id='modal_td'>{$real_link}</td>";
+                    $table .= self::td($real_link);
                 }
+
             }
             $table .= "</tr>";
-            $i++;
         }
         $table .= "</tbody></table>";
         return $table;

@@ -19,6 +19,11 @@ class Articles extends BaseModel
         return date('Y-m-d H:i:s', $this->updated_at);
     }
 
+    function getAuthor()
+    {
+        return $this->administrator->username;
+    }
+
     static function createArticles()
     {
         $libs = ['大', '小', '光', '树'];
