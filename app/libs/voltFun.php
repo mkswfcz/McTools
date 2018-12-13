@@ -272,17 +272,19 @@ class voltFun
         return $href;
     }
 
-    static function th($text)
+    static function th($text, $rows)
     {
-        return "<th id='modal_th'scope='col'>{$text}</th>";
+        $width = bcdiv(1200, $rows);
+        return "<th id='modal_th'scope='col' style='width: $width; '>{$text}</th>";
     }
 
-    static function td($value)
+    static function td($value, $rows)
     {
-        return "<td id='modal_td'>{$value}</td>";
+        $width = bcdiv(1200, $rows);
+        return "<td id='modal_td' style='width: $width;'>{$value}</td>";
     }
 
-    static function setTableTitle($table_head, $objects, $show_properties)
+    static function setTableTitle($table_head, $objects, $show_properties,$rows)
     {
         $object = $objects[0];
         $vars = get_object_vars($object);
@@ -292,23 +294,23 @@ class voltFun
             $get_method = 'get' . ucwords($real_key);
             $get_method = lcfirst(camelize($get_method));
             if (in_array($real_key, array_keys($vars)) || method_exists($object, $get_method)) {
-                $table_head .= self::th($show_word);
+                $table_head .= self::th($show_word, $rows);
             }
         }
         return $table_head;
     }
 
-    static function setTableLinks($table, $row_links)
+    static function setTableLinks($table, $row_links,$rows)
     {
         $link_titles = array_keys($row_links);
         foreach ($link_titles as $title) {
-            $table .= self::th($title);
+            $table .= self::th($title,$rows);
         }
         $table .= "</tr></thead><tbody><tr>";
         return $table;
     }
 
-    static function setTableTd($table, $object, $properties)
+    static function setTableTd($table, $object, $properties,$rows)
     {
         $vars = get_object_vars($object);
         foreach ($properties as $property => $show_word) {
@@ -326,7 +328,7 @@ class voltFun
                 $real_value = $result ? $result : date('Y-m-d H:i:s', $real_value);
             }
 
-            $table .= self::td($real_value);
+            $table .= self::td($real_value,$rows);
         }
         return $table;
     }
@@ -335,18 +337,19 @@ class voltFun
     {
         $table = "<table id='modal_table' class='table table-striped table-hover'>";
         $table .= "<thead> <tr>";
-        $table .= self::setTableTitle($table, $objects, $properties);
-        $table = self::setTableLinks($table, $row_links);
+        $rows = count($properties) + count($row_links);
 
+        $table .= self::setTableTitle($table, $objects, $properties, $rows);
+        $table = self::setTableLinks($table, $row_links,$rows);
         foreach ($objects as $object) {
 
-            $table = self::setTableTd($table, $object, $properties);
+            $table = self::setTableTd($table, $object, $properties,$rows);
             if (count($row_links) > 0) {
 
                 foreach ($row_links as $title => $links) {
                     $result = self::parseHref($links);
                     $real_link = self::buildHref($result, $object);
-                    $table .= self::td($real_link);
+                    $table .= self::td($real_link,$rows);
                 }
 
             }

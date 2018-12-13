@@ -74,7 +74,7 @@
 }
 
 #modal_th {
-    width: 200px;
+    /*width: 200px;*/
     height: 20px;
     font-size: 16px;
     color: #5e5e5e;
@@ -82,7 +82,7 @@
 }
 
 #modal_td {
-    width: 200px;
+    /*width: 200px;*/
     height: auto;
 }
 
