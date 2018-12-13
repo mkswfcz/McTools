@@ -274,7 +274,7 @@ class voltFun
 
     static function th($text, $rows)
     {
-        $width = bcdiv(1200, $rows);
+        $width = bcdiv(1200, $rows).'px';
         return "<th id='modal_th'scope='col' style='width: $width; '>{$text}</th>";
     }
 
