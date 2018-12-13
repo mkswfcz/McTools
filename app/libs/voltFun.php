@@ -289,7 +289,9 @@ class voltFun
 
         foreach ($show_properties as $property => $show_word) {
             $real_key = self::textReplace($property, '_text');
-            if (in_array($real_key, array_keys($vars))) {
+            $get_method = 'get' . ucwords($real_key);
+            $get_method = lcfirst(camelize($get_method));
+            if (in_array($real_key, array_keys($vars)) || method_exists($object, $get_method)) {
                 $table_head .= self::th($show_word);
             }
         }
