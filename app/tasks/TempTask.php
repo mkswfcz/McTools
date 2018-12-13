@@ -186,9 +186,21 @@ class TempTask extends Phalcon\Cli\Task
         $table->column('name', Swoole\Table::TYPE_STRING, 64);
         $table->column('num', Swoole\Table::TYPE_FLOAT);
         $result = $table->create();
-        $set = $table->set('1',['id'=>1,'name'=>'test1','num'=>6.5]);
+        $set = $table->set('1', ['id' => 1, 'name' => 'test1', 'num' => 6.5]);
         $get = $table->get('1');
         $count = $table->count();
-        debug('res: ', $result,$set,$get,$count,$table->getMemorySize());
+        debug('res: ', $result, $set, $get, $count, $table->getMemorySize());
+    }
+
+    function ipAction()
+    {
+        $ip = '112.49.96.86';
+        $result = IpLocation::find($ip,'ka');
+        if (-1 == $result['code']) {
+            debug($result['error']);
+            return false;
+        }
+        $real_location = $result['location'];
+        debug($real_location);
     }
 }

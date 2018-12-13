@@ -4,6 +4,8 @@
     "phpmailer/phpmailer": "~6.0",
     "aferrandini/phpqrcode": "1.0.1",
     "block-matrix-network/php-eos-rpc-sdk":"dev-master",
-    "jaeger/querylist":"V4.0.4"
+    "jaeger/querylist":"V4.0.4",
+    "ipip/db":"dev-master",
+    "stichoza/google-translate-php":"dev-master"
   }
 }

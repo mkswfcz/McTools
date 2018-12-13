@@ -8,22 +8,26 @@ function isNumericArray($array)
     return $keys == $check;
 }
 
-function clog($content, $log_type, $location = '')
+function clog($contents, $log_type, $location = '')
 {
     $log_text = '';
-    if (is_array($content)) {
-        if (!isNumericArray($content)) {
-            foreach ($content as $key => $value) {
-                $log_text .= is_string($value) ? $key . '=>' . $value . ' ' : json_encode($key) . '=>' . json_encode($value, JSON_UNESCAPED_UNICODE) . '  ';
+    foreach ($contents as $content) {
+        $log_text ? $log_text .= '  ' : $log_text .= '';
+        if (is_array($content)) {
+            if (!isNumericArray($content)) {
+                foreach ($content as $key => $value) {
+                    $log_text .= is_string($value) ? $key . '=>' . $value . ' ' : json_encode($key) . '=>' . json_encode($value, JSON_UNESCAPED_UNICODE) . '  ';
+                }
+            } else {
+                $log_text .= json_encode($content, JSON_UNESCAPED_UNICODE);
             }
+        } elseif (is_object($content)) {
+            $log_text .= json_encode($content, JSON_UNESCAPED_UNICODE);
         } else {
-            $log_text = json_encode($content, JSON_UNESCAPED_UNICODE);
+            $log_text .= $content;
         }
-    } elseif (is_object($content)) {
-        $log_text = json_encode($content, JSON_UNESCAPED_UNICODE);
-    } else {
-        $log_text = $content;
     }
+
     $traces = debug_backtrace();
     $real_traces = current($traces);
 
@@ -53,6 +57,8 @@ function debug()
     $pid = posix_getpid();
     $time = date('Y-m-d H:i:s', time());
     $location = "[{$time}][PID {$pid} {$file}=>{$real_traces['line']}]";
+
+
     $print = clog($messages, Phalcon\Logger::DEBUG, $location);
     if (php_sapi_name() == 'cli') {
         printLog($print);
@@ -453,4 +459,11 @@ function calStore($params)
 
     $all_store = bcmul($year_store, $year);
     debug("{$year} year remainder: {$all_store} ,per_year: {$year_store}");
+}
+
+function translate($content, $target_lang = 'en')
+{
+    $tr = new \Stichoza\GoogleTranslate\GoogleTranslate();
+    $result = $tr->setSource()->setTarget($target_lang)->translate($content);
+    return $result;
 }
