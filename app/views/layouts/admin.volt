@@ -15,7 +15,8 @@
         {{ dirLink([
             'AMark':['Login':'/admin/administrators','Mail':'/admin/administrators/bindMail','ajax_link_Logout':'myModal'],
             'Articles':['文章':'/admin/articles/index'],
-            'TalkBox':['聊天':'/discuss/index']
+            'TalkBox':['聊天':'/discuss/index'],
+            'Translate':['翻译':'/admin/translate/index']
         ]) }}
     {% endif %}
 </div>

@@ -150,7 +150,6 @@ class voltFun
             }
         }
         $input = "<textarea {$input}>";
-        debug('tex: ', $input);
         return $input;
     }
 
@@ -274,7 +273,7 @@ class voltFun
 
     static function th($text, $rows)
     {
-        $width = bcdiv(1200, $rows).'px';
+        $width = bcdiv(1200, $rows) . 'px';
         return "<th id='modal_th'scope='col' style='width: $width; '>{$text}</th>";
     }
 
@@ -284,7 +283,7 @@ class voltFun
         return "<td id='modal_td' style='width: $width;'>{$value}</td>";
     }
 
-    static function setTableTitle($table_head, $objects, $show_properties,$rows)
+    static function setTableTitle($table_head, $objects, $show_properties, $rows)
     {
         $object = $objects[0];
         $vars = get_object_vars($object);
@@ -300,37 +299,49 @@ class voltFun
         return $table_head;
     }
 
-    static function setTableLinks($table, $row_links,$rows)
+    static function setTableLinks($table, $row_links, $rows)
     {
         $link_titles = array_keys($row_links);
         foreach ($link_titles as $title) {
-            $table .= self::th($title,$rows);
+            $table .= self::th($title, $rows);
         }
         $table .= "</tr></thead><tbody><tr>";
         return $table;
     }
 
-    static function setTableTd($table, $object, $properties,$rows)
+    static function setTableTd($table, $object, $properties, $rows)
     {
         $vars = get_object_vars($object);
         foreach ($properties as $property => $show_word) {
             $real_property = self::textReplace($property, '_text');
-            $real_value = $vars[$real_property];
             if (!property_exists($object, $real_property)) {
                 $get_method = 'get' . ucwords($real_property);
                 $get_method = lcfirst(camelize($get_method));
                 if (method_exists($object, $get_method)) {
                     $real_value = $object->$get_method();
                 }
+            } else {
+                $real_value = $vars[$real_property];
             }
             if (strpos($property, '_text')) {
                 $result = self::getText($object, $property);
                 $real_value = $result ? $result : date('Y-m-d H:i:s', $real_value);
             }
 
-            $table .= self::td($real_value,$rows);
+            $table .= self::td($real_value, $rows);
         }
         return $table;
+    }
+
+    static function select($name,$selectors)
+    {
+
+        $head = "<select class='combobox selectpicker' name='$name' id='modal_select'>";
+        $options = '';
+        foreach ($selectors as $selector => $value) {
+            $options .= "<option value='$value'> {$selector}</option>";
+        }
+        return $head . $options.'</select>';
     }
 
     static function modalTable($objects, $properties, $row_links = array())
@@ -340,16 +351,16 @@ class voltFun
         $rows = count($properties) + count($row_links);
 
         $table .= self::setTableTitle($table, $objects, $properties, $rows);
-        $table = self::setTableLinks($table, $row_links,$rows);
+        $table = self::setTableLinks($table, $row_links, $rows);
         foreach ($objects as $object) {
 
-            $table = self::setTableTd($table, $object, $properties,$rows);
+            $table = self::setTableTd($table, $object, $properties, $rows);
             if (count($row_links) > 0) {
 
                 foreach ($row_links as $title => $links) {
                     $result = self::parseHref($links);
                     $real_link = self::buildHref($result, $object);
-                    $table .= self::td($real_link,$rows);
+                    $table .= self::td($real_link, $rows);
                 }
 
             }

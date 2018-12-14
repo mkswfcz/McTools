@@ -25,6 +25,15 @@ class BaseModel extends Model
         return property_exists($this, $property);
     }
 
+    function beforeCreate()
+    {
+        debug('bc: ',$this);
+        if (property_exists($this, 'created_at')) {
+            $this->created_at = time();
+        }
+        debug('bc: ',$this);
+    }
+
     function __get($name)
     {
         $camel_name = Phalcon\Text::camelize($name);
@@ -48,6 +57,10 @@ class BaseModel extends Model
 
     }
 
+    function __call($name, $arguments)
+    {
+        debug('call_', $name, $arguments);
+    }
 
     function toJson()
     {
@@ -62,7 +75,9 @@ class BaseModel extends Model
 
     function beforeUpdate()
     {
-        $this->updated_at = time();
+        if (property_exists($this, 'updated_at')) {
+            $this->updated_at = intval(time());
+        }
     }
 
     static function getMethods($object)
@@ -106,10 +121,10 @@ class BaseModel extends Model
     static function __callStatic($name, $arguments)
     {
         $class = get_called_class();
-        debug($name, $arguments, strpos($name, 'findFirstBy'));
         if (false !== strpos($name, 'findFirstBy')) {
-            $column = uncamelize(strtolower(str_replace('findFirstBy', '', $name)));
-            debug('column: ', $column);
+            $property = str_replace('findFirstBy', '', $name);
+            $column = uncamelize($property);
+
             if ($name === 'findFirstBy') {
                 return self::bindModel($class, 'findFirst', $arguments);
             }
