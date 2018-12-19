@@ -7,3 +7,6 @@
  */
 $path = realpath(__DIR__.'/../public/index.php');
 require "{$path}";
+require "Coins.php";
+$connect = BaseModel::getConnect();
+debug('con: ',$connect);
