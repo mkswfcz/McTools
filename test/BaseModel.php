@@ -26,6 +26,11 @@ class BaseModel
         }
     }
 
+    function __get($name)
+    {
+        return $this->$name;
+    }
+
     function getProperties()
     {
         return self::$properties;
@@ -108,15 +113,51 @@ class BaseModel
 
     function save()
     {
-        if ($this->id) {
+        $database_model = self::uncamelize(get_called_class());
+        if (property_exists($this, 'id')) {
+            self::echoLog($this->id);
             $data = self::find(['id' => $this->id]);
-            if (count($data) > 1) {
-
+            if (count($data) == 1) {
+                $sql = "update $database_model set ";
+                foreach (self::getDataBaseColumns() as $property => $type) {
+                    if (property_exists($this, $property) && 'id' != $property) {
+                        $value = $this->$property;
+                        if (is_string($this->$property)) {
+                            $value = '\'' . $value . '\'';
+                        }
+                        $sql .= ' ' . $property . '=' . $value . ',';
+                    }
+                }
+                $sql = substr($sql, 0, strlen($sql) - 1);
+                $sql .= " where id={$this->id}";
+                return $this->execute($sql);
             }
             #sql update
         } else {
-            self::echoLog('sql create');
+            $sql = "insert into $database_model";
+            $properties = $values = '';
+            foreach (self::getDataBaseColumns() as $property => $type) {
+                if (property_exists($this, $property) && 'id' != $property) {
+                    $properties .= $property . ',';
+
+                    if (is_string($this->$property)) {
+                        $values .= '\'' . $this->$property . '\',';
+                    } else {
+                        $values .= $this->$property . ',';
+                    }
+                }
+            }
+            $properties = substr($properties, 0, strlen($properties) - 1);
+            $values = substr($values, 0, strlen($values) - 1);
+            $sql .= '(' . $properties . ') ' . 'values(' . $values . ')';
+            return $this->execute($sql);
         }
+    }
+
+    function delete()
+    {
+        $database_model = self::uncamelize(get_called_class());
+        return $this->execute("delete from $database_model where id = {$this->id}");
     }
 
     function setSnapshotHash($object)
@@ -126,10 +167,29 @@ class BaseModel
 
     function execute($sql)
     {
-        $db_connect = self::getDbConnect();
-        $res = pg_query($db_connect, $sql);
-        $data = pg_fetch_all($res);
-        return $data;
+        $operators = ['update', 'select', 'delete', 'insert'];
+        try {
+            $db_connect = self::getDbConnect();
+            $params = explode(' ', $sql);
+
+            $bind_params = [];
+
+            foreach ($params as $param) {
+                if (preg_match('/=/', $param)) {
+                    list($name, $value) = explode('=', $param, 2);
+                    $bind_params[$name] = $value;
+                }
+            }
+
+            if (in_array($params[0], $operators)) {
+                self::echoLog('execute: ' . $sql);
+                #pg_prepare pg_execute
+                return pg_exec($db_connect, $sql);
+            }
+        } catch (Exception $e) {
+            self::echoLog($e->getMessage());
+        }
+        return false;
     }
 
     static function find($params)
@@ -138,7 +198,6 @@ class BaseModel
 
         $clazz = get_called_class();
         $database_model = self::uncamelize($clazz);
-//        self::echoLog('clazz: ' . $database_model);
 
         $database_columns = self::getDataBaseColumns();
         $properties = array_keys($database_columns);
