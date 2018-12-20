@@ -14,7 +14,7 @@ class Coins extends BaseModel
 }
 
 $coins = Coins::find(['code' => 'XRP']);
-//$connect = Coins::getConnect();
+//$connect = Coins::getDbConnect();
 //var_dump($connect);
 //$construct = Coins::getDataBaseColumns('coins');
 //foreach ($coins as $value) {
@@ -22,6 +22,15 @@ $coins = Coins::find(['code' => 'XRP']);
 //}
 
 
-//$coin = new Coins();
-//$coin->id = 1;
-//$coin->save();
+$coin = new Coins();
+$coin->id = 1;
+$coin->save();
+//var_dump($coin);
+//var_dump(count($coins));
+//foreach ($coins as $coin) {
+//    var_dump($coin->marked_word);
+//}
+//$redis = Coins::getRedis('127.0.0.1:6389');
+//$redis->set('test_a',1);
+//$v = $redis->get('test_a');
+//echo $v.PHP_EOL;
