@@ -115,15 +115,32 @@ class BaseModel
     {
         $database_model = self::uncamelize(get_called_class());
         if (property_exists($this, 'id')) {
-            self::echoLog($this->id);
             $data = self::find(['id' => $this->id]);
             if (count($data) == 1) {
                 $sql = "update $database_model set ";
                 foreach (self::getDataBaseColumns() as $property => $type) {
                     if (property_exists($this, $property) && 'id' != $property) {
+
                         $value = $this->$property;
                         if (is_string($this->$property)) {
                             $value = '\'' . $value . '\'';
+                        }
+                        #TODO 取数据库字段属性
+                        if(empty($value)) {
+                            switch ($type) {
+                                case 'int4':
+                                    $value = 0;
+                                    break;
+                                case 'numeric':
+                                    $value = 0.0;
+                                    break;
+                                case 'varchar':
+                                    $value = '\'\'';
+                                    break;
+                                case 'text':
+                                    $value = '\'\'';
+                                    break;
+                            }
                         }
                         $sql .= ' ' . $property . '=' . $value . ',';
                     }

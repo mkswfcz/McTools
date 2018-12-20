@@ -13,7 +13,7 @@ class Coins extends BaseModel
 
 }
 
-$coins = Coins::find(['chinese_name' => '瑞波bi', 'limit' => 1]);
+$coins = Coins::find(['code'=>'TVB','limit' => 1]);
 //$connect = Coins::getDbConnect();
 //var_dump($connect);
 //$construct = Coins::getDataBaseColumns('coins');
@@ -37,5 +37,6 @@ $coins = Coins::find(['chinese_name' => '瑞波bi', 'limit' => 1]);
 //$v = $redis->get('test_a');
 //echo $v.PHP_EOL;
 foreach ($coins as $coin) {
-    var_dump($coin->delete());
+    $coin->code='TVB';
+    $coin->save();
 }
