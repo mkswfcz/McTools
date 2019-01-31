@@ -80,7 +80,7 @@ class AdministratorsController extends \BaseController
             if ($admin) {
                 $id = $this->session->get('admin_id');
                 if ($id === $admin->id) {
-                    return $this->respJson(-1, '已登录');
+                    return $this->respJson(0, '已登录',['redirect_url' => $admin->redirect_url]);
                 }
                 $this->session->set('admin_id', $admin->id);
                 return $this->respJson(0, '登录成功', ['redirect_url' => $admin->redirect_url]);
